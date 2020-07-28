@@ -30,27 +30,32 @@ void uso(char *argv[]) {
 }
 
 
-
+//Abrir archivo sintetizador.txt para leer (texto) "rt".
 FILE *synth(){
 
 }
 
+//Abrir archivo midi para leer (binario) "rb".
 FILE *midi(){
 
 }
 
+//Abrir archivo wave para escribir (binario) "wb".
 FILE *wave(){
 
 }
 
+//Leer parametro de canal o por omision.
 size_t canal(){
 
 }
 
+//Leer parametro de frecuencia o por omision.
 int frec(){
 
 }
 
+//Leer parametro de pulsos por segundo o por omision.
 ??? pulsos(){
 	
 }
