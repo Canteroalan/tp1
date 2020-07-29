@@ -15,11 +15,11 @@ void uso(char *argv[]) {
 }
 
 FILE *abrir_sintetizador(int argc, char *argv[]){
-    for(size_t i = 0; i < argc; i++){
+    for(size_t i = 1; i < argc; i++){
         
         if(! strcmp(argv[i], "-s")){
             
-            FILE *s = fopen(argv[i + 1], "rt");
+            FILE *s = fopen(argv[i], "rt");
             if(s == NULL)
                 return NULL;
             
@@ -32,11 +32,11 @@ FILE *abrir_sintetizador(int argc, char *argv[]){
 }
 
 FILE *abrir_midi(int argc, char *argv[]){
-    for(size_t i = 0; i < argc; i++){
+    for(size_t i = 1; i < argc; i++){
         
         if(! strcmp(argv[i], "-i")){
             
-            FILE *m = fopen(argv[i + 1], "rb");
+            FILE *m = fopen(argv[i], "rb");
             if(m == NULL)
                 return NULL;
             
@@ -49,11 +49,11 @@ FILE *abrir_midi(int argc, char *argv[]){
 }
 
 FILE *abrir_wave(int argc, char *argv[]){
-    for(size_t i = 0; i < argc; i++){
+    for(size_t i = 1; i < argc; i++){
         
         if(! strcmp(argv[i], "-o")){
             
-            FILE *w = fopen(argv[i + 1], "wb");
+            FILE *w = fopen(argv[i], "wb");
             if(w == NULL)
                 return NULL;
             
@@ -65,19 +65,19 @@ FILE *abrir_wave(int argc, char *argv[]){
     return NULL;
 }
 
-char leer_canal(int argc, char *argv[]){
-    char canal;
+uint8_t leer_canal(int argc, char *argv[]){
+    uint8_t canal;
     size_t i;
 
-    for(i = 0; i < argc; i++){
+    for(i = 1; i < argc; i++){
         if(! strcmp(argv[i], "-c")){
-            &canal = argv[i + 1];
+            canal = atoi(argv[i]);
             break;
         }
     }
 
     if(i == argc)
-        canal = '0';
+        canal = 0;
 
     return canal;
 }
@@ -86,9 +86,9 @@ int leer_frecuencia(int argc, char *argv[]){
     int frec;
     size_t i;
 
-    for(i = 0; i < argc; i++){
+    for(i = 1; i < argc; i++){
         if(! strcmp(argv[i], "-f")){
-            frec = atoi(argv[i + 1]);
+            frec = atoi(argv[i]);
             break;
         }
     }
@@ -103,9 +103,9 @@ int leer_pulso(int argc, char *argv[]){
     int pulso;
     size_t i;
 
-    for(i = 0; i < argc; i++){
+    for(i = 1; i < argc; i++){
         if(! strcmp(argv[i], "-r")){
-            pulso = atoi(argv[i + 1]);
+            pulso = atoi(argv[i]);
             break;
         }
     }
