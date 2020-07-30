@@ -11,9 +11,9 @@
 
 bool leer_sintetizador(FILE *s){
 	uint8_t n;
+	char *q = NULL;
 	
-	if(fread(&n, sizeof(uint8_t), 1, s) != 1)
-		return false;
+	n = atoi(fgets(q, sizeof(int), s));
 
 	for(size_t i = 0; i < n; i++)
 		printf("%x\n", n);
