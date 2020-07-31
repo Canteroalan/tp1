@@ -65,13 +65,14 @@ FILE *abrir_wave(int argc, char *argv[]){
     return NULL;
 }
 
-uint8_t leer_canal(int argc, char *argv[]){
+
+char leer_canal(int argc, char *argv[]){
     uint8_t canal;
     size_t i;
 
     for(i = 1; i < argc; i++){
         if(! strcmp(argv[i], "-c")){
-            canal = atoi(argv[i]);
+            canal = atoi(argv[i + 1]);
             break;
         }
     }

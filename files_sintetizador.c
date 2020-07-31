@@ -51,10 +51,10 @@ char **_leer_func_mod(char *s,size_t *p){
 }
 
 
-archivo_de_sint_t * leer_archivo_de_sintetizador(FILE * r,archivo_de_sint_t * t ){
+archivo_de_sint_t *leer_archivo_de_sintetizador(FILE * r, archivo_de_sint_t * t){
 	char s[MAX];
-	size_t n=atoi(fgets(s,MAX,r));
-	float * multiplicador=malloc(n*sizeof(float));
+	size_t n = atoi(fgets(s, MAX, r));
+	float *multiplicador = malloc(n * sizeof(float));
 
 	if(multiplicador == NULL)
 		return NULL;
@@ -63,6 +63,7 @@ archivo_de_sint_t * leer_archivo_de_sintetizador(FILE * r,archivo_de_sint_t * t 
 
 	if(intensidad == NULL)
 		return NULL;
+
 
 	for(size_t i=0;i<n;i++){
 		multiplicador[i]=i+1;
@@ -89,6 +90,7 @@ void destruir_archivo_de_sint_t (archivo_de_sint_t * t){
 		free(t->parametros_modulacion[i]);
 	}
 }
+
 
 
 
