@@ -19,7 +19,7 @@ FILE *abrir_sintetizador(int argc, char *argv[]){
         
         if(! strcmp(argv[i], "-s")){
             
-            FILE *s = fopen(argv[i], "rt");
+            FILE *s = fopen(argv[i+1], "rt");
             if(s == NULL)
                 return NULL;
             
@@ -36,7 +36,7 @@ FILE *abrir_midi(int argc, char *argv[]){
         
         if(! strcmp(argv[i], "-i")){
             
-            FILE *m = fopen(argv[i], "rb");
+            FILE *m = fopen(argv[i+1], "rb");
             if(m == NULL)
                 return NULL;
             
@@ -53,7 +53,7 @@ FILE *abrir_wave(int argc, char *argv[]){
         
         if(! strcmp(argv[i], "-o")){
             
-            FILE *w = fopen(argv[i], "wb");
+            FILE *w = fopen(argv[i+1], "wb");
             if(w == NULL)
                 return NULL;
             
@@ -89,7 +89,7 @@ int leer_frecuencia(int argc, char *argv[]){
 
     for(i = 1; i < argc; i++){
         if(! strcmp(argv[i], "-f")){
-            frec = atoi(argv[i]);
+            frec = atoi(argv[i+1]);
             break;
         }
     }
@@ -106,7 +106,7 @@ int leer_pulso(int argc, char *argv[]){
 
     for(i = 1; i < argc; i++){
         if(! strcmp(argv[i], "-r")){
-            pulso = atoi(argv[i]);
+            pulso = atoi(argv[i+1]);
             break;
         }
     }
