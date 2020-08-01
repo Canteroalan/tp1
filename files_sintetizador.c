@@ -12,14 +12,14 @@ typedef struct {
 	float * parametros_modulacion[3]; //aca se guardan los parametros de modulacion 
 } archivo_de_sint_t;
 
-
+/*
 float _leer_intensidad(char * c){
 	char r[MAX];
         for(int i=0;c[i];i++)
                 r[i]=c[2+i];
         return atof(r);
 }
-
+*/
 char **_leer_func_mod(char *s,size_t *p){
 	int contador=0;
         for(size_t i=0;s[i];i++){
@@ -50,7 +50,7 @@ char **_leer_func_mod(char *s,size_t *p){
 }
 
 
-archivo_de_sint_t *leer_archivo_de_sintetizador(FILE * r, archivo_de_sint_t * t){
+float ** leer_archivo_de_sintetizador(FILE * r,float **v1,float **v2,char ***cadenas){
 	char s[MAX];
 	size_t n = atoi(fgets(s, MAX, r)); //aca lei el primer numero (esto iria en cantidad_armonicos)
 	float *multiplicador = malloc(n * sizeof(float));
@@ -67,13 +67,23 @@ archivo_de_sint_t *leer_archivo_de_sintetizador(FILE * r, archivo_de_sint_t * t)
 	for(size_t i=0;i<n;i++){ //en esta parte se leen los multiplicadores y las intensidades 
 		multiplicador[i]=i+1;
 		char aux[MAX];
-		intensidad[i]=_leer_intensidad(fgets(aux,MAX,r));	
+		char **c=_leer_func_mod(fgets(aux,MAX,r));
+		intensidad[i]=atof(c[1]);	
 	}
+	*v1=multiplicador;
+	*v2=intensidad;
+
+	float ** vector_de_parametros = malloc(3*sizeof(float*));
+
+
+	if (vector_de_parametros == NULL)
+		return NULL;
+	        
         for(int i=0;i<3;i++){  // aca se leen los nombres de las funciones y sus parametros 
 		char aux[MAX];
 		size_t cantidad_cadenas;
 		char ** p=_leer_func_mod(fgets(aux,MAX,r),&cantidad_cadenas);
-		func_modulacion[i]=p[0];
+		*cadenas[i]=p[0];
 		if(cantidad_cadenas>1){
 			float * parametros=malloc((cantidad_cadenas-1)*sizeof(float));
 
@@ -83,34 +93,12 @@ archivo_de_sint_t *leer_archivo_de_sintetizador(FILE * r, archivo_de_sint_t * t)
 			for(int i=0;i<(cantidad_cadenas-1);i++)
 				parametros[i]=atof(p[i+1]);
 		}
+		vector_de_parametro[i]=parametros;
 	}
-
-
-
-
-
-
-		
-
-
-
-
-
-
-				
-
-
-
-	}
-// esta destruye la estructura 
-void destruir_archivo_de_sint_t (archivo_de_sint_t * t){
-	for(size_t=0;i<3;i++){
-		if(i<2)
-			free(t->armonicos[i]);
-		free(t->func_modulacion[i]);
-		free(t->parametros_modulacion[i]);
-	}
+	return vector_de_parametros;
 }
+
+
 
 
 
