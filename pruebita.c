@@ -13,17 +13,25 @@ typedef struct {
 } dato_t;
 
 dato_t *crear_dato_t(size_t n){
-	dato_t *nuevo_dato = malloc(sizeof(dato_t));
 
+	dato_t *nuevo_dato = malloc(sizeof(dato_t));
 	if(nuevo_dato == NULL)
 		return NULL;
 
-	float*a = malloc(n * sizeof(float));
-	float*b = malloc(n * sizeof(float));
+	float *a = malloc(n * sizeof(float));
+	if(a == NULL)
+		return NULL;
+
+	float *b = malloc(n * sizeof(float));
+	if(b == NULL)
+		return NULL;
 
 	nuevo_dato->multiplicador = a;
 	nuevo_dato->intensidad = b;
 	nuevo_dato->cantidad_armonicos = n;
+
+	//Creo que falta pedir memoria para func_mod.
+	//float **c = malloc(sizeof(char *) * 3).
 
 	return nuevo_dato;
 }
