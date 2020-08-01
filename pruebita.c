@@ -13,27 +13,32 @@ typedef struct {
 } dato_t;
 
 dato_t *crear_dato_t(size_t n){
-	dato_t *nuevo_dato = malloc(sizeof(dato_t));
 
+	dato_t *nuevo_dato = malloc(sizeof(dato_t));
 	if(nuevo_dato == NULL)
 		return NULL;
 
 	float *a = malloc(n * sizeof(float));
-
 	if(a == NULL)
 		return NULL;
 
 	float *b = malloc(n * sizeof(float));
-
 	if(b == NULL)
 		return NULL;
+
+
+	for(size_t i = 0; i < 3; i++){
+		
+		char *c = malloc(sizeof(char) * 15);
+		if(c == NULL)
+			return NULL;
+	
+		nuevo_dato->func_mod[i] = c;
+	}
 
 	nuevo_dato->multiplicador = a;
 	nuevo_dato->intensidad = b;
 	nuevo_dato->cantidad_armonicos = n;
-
-	//Creo que falta pedir memoria para func_mod.
-	//float **c = malloc(sizeof(char *) * 3).
 
 	return nuevo_dato;
 }
@@ -41,6 +46,10 @@ dato_t *crear_dato_t(size_t n){
 void destruir_dato_t(dato_t * r){
 	free(r->multiplicador);
 	free(r->intensidad);
+
+	for(size_t i = 0; i < 3; i++)
+		free(r->func_mod[i]);
+
 	free(r);
 }
 
@@ -93,8 +102,8 @@ dato_t *leer_archivo_de_sintetizador(FILE *r){
 	char ** p;
 	size_t cantidad_cadenas;
 	for(size_t i = 0; i < 3; i++){
-	       	char aux2[MAX];
-	        p=_leer_func_mod(fgets(aux2,MAX,r),&cantidad_cadenas);
+       	char aux2[MAX];
+        p=_leer_func_mod(fgets(aux2,MAX,r),&cantidad_cadenas);
 		archivador->func_mod[i]=p[0];
 		if(cantidad_cadenas > 1)
 			for(size_t j = 0; j < cantidad_cadenas - 1; j++){
@@ -105,15 +114,9 @@ dato_t *leer_archivo_de_sintetizador(FILE *r){
 	return archivador;
 }
 
-int main(){
-	FILE *p = fopen("sintetizador.txt","rt");
+void imprimir_funciones_mod(dato_t *s){
 
-	if(p == NULL)
-		return 1;
-
-	dato_t *s = leer_archivo_de_sintetizador(p);
-	printf("%ld\n",s->cantidad_armonicos);
-	for(int j = 0;j < s->cantidad_armonicos; j++)
+	for(int j = 0; j < s->cantidad_armonicos; j++)
 		printf("%f  %f\n", s->multiplicador[j], s->intensidad[j]);
 
 	for(size_t i = 0; i < 3; i++){
@@ -124,6 +127,21 @@ int main(){
 		
 		printf("\n");
 	}
+}
+
+
+int main(){
+	FILE *p = fopen("sintetizador.txt","rt");
+
+	if(p == NULL)
+		return 1;
+
+	dato_t *s = leer_archivo_de_sintetizador(p);
+
+	printf("%ld\n",s->cantidad_armonicos);
+	
+	imprimir_funciones_mod(s);
+
 	destruir_dato_t(s);
 	fclose(p);
 	return 0;
