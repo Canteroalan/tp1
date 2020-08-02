@@ -23,7 +23,7 @@ typedef enum {
 
 float modulacion_constante(double t, float params[3]);
 float modulacion_linear(double t, float params[3]);
-float modulacion_inlinear(double t, float params[3]);
+float modulacion_invlinear(double t, float params[3]);
 float modulacion_seno(double t, float params[3]);
 float modulacion_exponencial(double t, float params[3]);
 float modulacion_invexponencial(double t, float params[3]);
