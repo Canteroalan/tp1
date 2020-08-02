@@ -13,7 +13,7 @@
 
 
 int main(int argc, char *argv[]){
-	if(argc < 5){
+	if(argc < 7){
 		uso(argv);
 		return 1;
 	}
