@@ -56,6 +56,10 @@ dato_t *crear_dato_t(FILE *s){
 			return NULL;
 	}
 
+	for(size_t i = 0; i < 3; i++)
+		for(size_t j = 0; j < 3; j++)
+			d->parametros[i][j] = 0;
+
 	free(q);
 
 	return d;
@@ -168,23 +172,26 @@ bool leer_func_mod(char *s, char *func_mod, float parametros[3]){
     for(size_t i = 0; i < (contador - 1); i++){
 
     	if(i == 0){
-    		for(size_t j = 0; s[j] != ' '; j++)
+    		size_t j;
+    		for(j = 0; s[j] != ' '; j++)
     			func_mod[j] = s[j];
 
-    		n += strlen(func_mod) + 1;
+    		n += (j + 1); //Resuelve error de que no esta inicializado func_mod.
+
+    		//n += strlen(func_mod) + 1;
     	}
 
     	for(size_t i = 0; i < 8; i++)
     		vector[i] = 0;
 
-    	size_t j;
+    	size_t a;
 
-	    for(j = 0; (s[(j + n)] != ' ') && (s[(j + n)] != '\n'); j++)
-		    vector[j] = s[j + n];
+	    for(a = 0; (s[(a + n)] != ' ') && (s[(a + n)] != '\n'); a++)
+		    vector[a] = s[a + n];
 
 		parametros[i] = atof(vector);
 
-        n += (j + 1);
+        n += (a + 1);
     }
 
     return true;
