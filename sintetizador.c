@@ -90,7 +90,8 @@ void destruir_lineas(char **lineas, size_t n){
     free(lineas);
 }
 
-bool leer_sintetizador(FILE *s, int n, int *f, float *a, char *func_mod[3], float parametros[3][3]){
+//bool leer_sintetizador(FILE *s, int n, int *f, float *a, char *func_mod[3], float parametros[3][3]){
+bool leer_sintetizador(FILE *s, synt_t *synt){
 	
 	char *q = malloc(sizeof(char) * MAX);
 	if(q == NULL)
@@ -100,7 +101,7 @@ bool leer_sintetizador(FILE *s, int n, int *f, float *a, char *func_mod[3], floa
 
 	//int mult = 10;
 
-	for(size_t i = 0; i < n; i++){
+	for(size_t i = 0; i < synt->cantidad_armonicos; i++){
 		fgets(q, MAX, s);
 		
 		//En caso de que la frecuencia supere 1 cifra.
@@ -115,15 +116,15 @@ bool leer_sintetizador(FILE *s, int n, int *f, float *a, char *func_mod[3], floa
         	return false;
     	}
 
-		f[i] = atoi(ss[0]);
-		a[i] = atof(ss[2]);
+		synt->frecuencia[i] = atoi(ss[0]);
+		synt->intensidad[i] = atof(ss[2]);
 
 		destruir_lineas(ss, 3);
 	}
 
 	for(size_t i = 0; i < 3; i++){
 		fgets(q, MAX, s);
-		leer_func_mod(q, func_mod[i], parametros[i]);
+		leer_func_mod(q, synt->func_mod[i], synt->parametros[i]);
 	}
 
 	free(q);

@@ -70,7 +70,7 @@ int main(int argc, char *argv[]){
 		return 1;
 	}
 
-	if(! leer_sintetizador(s, synt->cantidad_armonicos, synt->frecuencia, synt->intensidad, synt->func_mod, synt->parametros)){
+	if(! leer_sintetizador(s, synt)){
 		destruir_synt_t(synt);
 		destruir_note_t(note);
 		fclose(s);
@@ -80,22 +80,6 @@ int main(int argc, char *argv[]){
 	}
 
 	imprimir_synt_t(synt);
-
-	
-
-
-
-	for(size_t i = 0; i < synt->cantidad_armonicos; i++)
-		printf("%d %f\n", synt->frecuencia[i], synt->intensidad[i]);
-
-	for(size_t i = 0; i < 3; i++){
-		printf("%s ", synt->func_mod[i]);
-
-		for(size_t j = 0; j < 3; j++)
-			printf("%f ", synt->parametros[i][j]);
-
-		printf("\n");
-	}
 
 
 
