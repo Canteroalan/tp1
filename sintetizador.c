@@ -24,7 +24,7 @@ synt_t *crear_synt_t(FILE *s){
 
 	synt->cantidad_armonicos = atoi(fgets(q, MAX, s));
 
-	synt->frecuencia = malloc(synt->cantidad_armonicos * sizeof(int));
+	synt->frecuencia = malloc(synt->cantidad_armonicos * sizeof(float));
 	if(synt->frecuencia == NULL)
 		return NULL;
 
@@ -116,7 +116,7 @@ bool leer_sintetizador(FILE *s, synt_t *synt){
         	return false;
     	}
 
-		synt->frecuencia[i] = atoi(ss[0]);
+		synt->frecuencia[i] = atof(ss[0]);
 		synt->intensidad[i] = atof(ss[2]);
 
 		destruir_lineas(ss, 3);
@@ -181,10 +181,10 @@ bool leer_func_mod(char *s, char *func_mod, float parametros[3]){
 
 void imprimir_synt_t(synt_t *synt){
 
-	printf("%d\n", synt->cantidad_armonicos);
+	printf("%ld\n", synt->cantidad_armonicos);
 
 	for(size_t i = 0; i < synt->cantidad_armonicos; i++)
-		printf("%d %f\n", synt->frecuencia[i], synt->intensidad[i]);
+		printf("%f %f\n", synt->frecuencia[i], synt->intensidad[i]);
 
 	for(size_t i = 0; i < 3; i++){
 		printf("%s ", synt->func_mod[i]);

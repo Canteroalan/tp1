@@ -7,7 +7,7 @@
 
 #define PI 3.141592653589793
 #define FASE 0
-#define FM 10000
+
 
 
 double onda(double t,float a , float f,float phi ){

@@ -10,9 +10,9 @@
 
 
 typedef struct {
-	int *frecuencia;
+	float *frecuencia;
 	float *intensidad;
-	int cantidad_armonicos;
+	size_t cantidad_armonicos;
 	char *func_mod[3];
 	float parametros[3][3];
 } synt_t;

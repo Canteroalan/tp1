@@ -21,6 +21,7 @@ note_t *crear_note_t(void){
         fprintf(stderr, "Fallo malloc note\n");
         return NULL;
     }
+    return note;
 }
 
 bool leer_notas(FILE *f, note_t *note) {
@@ -118,7 +119,7 @@ bool leer_notas(FILE *f, note_t *note) {
     }
 
     for(size_t i = 0; i < encendida; i++)
-    	printf("Nota[%zd]: intensidad = %f, t0 = %d, duracion = %d, octava = %d, nota = %s\n", i, note[encendida].intensidad, note[encendida].t0, note[encendida].duracion, note[encendida].octava, note[encendida].nota);
+    	printf("Nota[%zd]: intensidad = %f, t0 = %f, duracion = %d, octava = %d, nota = %s\n", i, note[encendida].intensidad, note[encendida].t0, note[encendida].duracion, note[encendida].octava, note[encendida].nota);
 
     return 1;
 }

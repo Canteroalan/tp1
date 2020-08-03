@@ -30,7 +30,7 @@ typedef enum { DO, REb, RE, MIb, MI, FA, SOLb, SOL, LAb, LA, SIb, SI }nota_t;
 
 typedef struct {
         float  intensidad;
-        uint32_t t0;
+        double t0;
         uint32_t duracion;
         unsigned char octava;
         const char *nota;
