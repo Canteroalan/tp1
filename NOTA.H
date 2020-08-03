@@ -59,6 +59,8 @@ void descartar_metaevento(FILE *f, uint8_t tamagno);
 
 
 
-note_t *leer_notas(FILE *f);
+note_t *crear_note_t(void);
+bool leer_notas(FILE *f, note_t *note);
+void destruir_note_t(note_t *note);
 
 #endif

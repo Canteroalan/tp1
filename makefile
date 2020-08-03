@@ -5,10 +5,10 @@ LDFLAGS=-lm
 
 all: $(PROGRAM)
 
-$(PROGRAM): tp1.o argumentos.o nota.o ej5.o ej4.o
-	$(CC) $(CFLAGS) $(LDFLAGS) tp1.o argumentos.o nota.o ej5.o ej4.o -o $(PROGRAM)
+$(PROGRAM): tp1.o argumentos.o nota.o ej5.o ej4.o sintetizador.o
+	$(CC) $(CFLAGS) $(LDFLAGS) tp1.o argumentos.o nota.o ej5.o ej4.o sintetizador.o -o $(PROGRAM)
 
-tp1.o: tp1.c ARGUMENTOS.H NOTA.H
+tp1.o: tp1.c ARGUMENTOS.H NOTA.H SINTETIZADOR.H
 	$(CC) $(CFLAGS) $(LDFLAGS) -c tp1.c 
 
 argumentos.o: argumentos.c ARGUMENTOS.H
@@ -22,3 +22,6 @@ ej5.o: ej5.c NOTA.H
 
 ej4.o: ej4.c NOTA.H
 	$(CC) $(CFLAGS) $(LDFLAGS) -c ej4.c
+
+sintetizador.o: sintetizador.c SINTETIZADOR.H
+	$(CC) $(CFLAGS) $(LDFLAGS) -c sintetizador.c

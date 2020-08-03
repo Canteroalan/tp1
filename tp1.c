@@ -9,6 +9,7 @@
 
 #include "ARGUMENTOS.H"
 #include "NOTA.H"
+#include "SINTETIZADOR.H"
 
 //$ ./sintetizador -s <sintetizador.txt> -i <entrada.mid> -o <salida.wav> [-c <canal>] [-f <frecuencia>] [-r <pulsosporsegundo>]
 
@@ -45,7 +46,7 @@ int main(int argc, char *argv[]){
 	int pulso = leer_pulso(argc, argv);
 
 	
-	note_t *note = leer_notas(m);
+	note_t *note = crear_note_t();
 	if(note == NULL){
 		fclose(s);
 		fclose(m);
@@ -53,7 +54,56 @@ int main(int argc, char *argv[]){
 		return 1;
 	}
 
+	if(! leer_notas(s, note)){
+		destruir_note_t(note);
+		fclose(s);
+		fclose(m);
+		fclose(w);
+		return 1;
+	}
+	//Se imprime por pantalla note dentro de leer_notas en nota.c.
 
+
+	synt_t *synt = crear_synt_t(s);
+	if(synt == NULL){
+		fclose(s);
+		return 1;
+	}
+
+	if(! leer_sintetizador(s, synt->cantidad_armonicos, synt->frecuencia, synt->intensidad, synt->func_mod, synt->parametros)){
+		destruir_synt_t(synt);
+		destruir_note_t(note);
+		fclose(s);
+		fclose(m);
+		fclose(w);
+		return 1;
+	}
+
+	imprimir_synt_t(synt);
+
+	
+
+
+
+	for(size_t i = 0; i < synt->cantidad_armonicos; i++)
+		printf("%d %f\n", synt->frecuencia[i], synt->intensidad[i]);
+
+	for(size_t i = 0; i < 3; i++){
+		printf("%s ", synt->func_mod[i]);
+
+		for(size_t j = 0; j < 3; j++)
+			printf("%f ", synt->parametros[i][j]);
+
+		printf("\n");
+	}
+
+
+
+
+
+
+	destruir_note_t(note);
+	destruir_synt_t(synt);
 	fclose(s);
 	fclose(m);
 	fclose(w);

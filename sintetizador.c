@@ -1,78 +1,61 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <assert.h>
 #include <math.h>
 #include <stdbool.h>
 #include <stdint.h>
 
 
+#include "SINTETIZADOR.H"
+
+
 #define MAX 256
 
 
-typedef struct {
-	int *frecuencia;
-	float *intensidad;
-	int cantidad_armonicos;
-	char *func_mod[3];
-	float parametros[3][3];
-} dato_t;
+synt_t *crear_synt_t(FILE *s){
 
-
-dato_t *crear_dato_t(FILE *s);
-void destruir_dato_t(dato_t *d);
-char **split(const char * s, const int * anchos, size_t ncampos);
-void destruir_lineas(char **lineas, size_t n);
-void imprimir_lineas(char **ss, size_t n);
-bool leer_sintetizador(FILE *s, int n, int *f, float *a, char *func_mod[3], float parametros[3][3]);
-bool leer_func_mod(char *s, char *func_mod, float parametros[3]);
-
-
-dato_t *crear_dato_t(FILE *s){
-
-	dato_t *d = malloc(sizeof(dato_t));
-	if(d == NULL)
+	synt_t *synt = malloc(sizeof(synt_t));
+	if(synt == NULL)
 		return NULL;
 
 	char *q = malloc(sizeof(char) * MAX);
 	if(q == NULL)
 		return false;
 
-	d->cantidad_armonicos = atoi(fgets(q, MAX, s));
+	synt->cantidad_armonicos = atoi(fgets(q, MAX, s));
 
-	d->frecuencia = malloc(d->cantidad_armonicos * sizeof(int));
-	if(d->frecuencia == NULL)
+	synt->frecuencia = malloc(synt->cantidad_armonicos * sizeof(int));
+	if(synt->frecuencia == NULL)
 		return NULL;
 
-	d->intensidad = malloc(d->cantidad_armonicos * sizeof(float));
-	if(d->intensidad == NULL)
+	synt->intensidad = malloc(synt->cantidad_armonicos * sizeof(float));
+	if(synt->intensidad == NULL)
 		return NULL;
 
 
 	for(size_t i = 0; i < 3; i++){
-		
-		d->func_mod[i] = malloc(sizeof(char) * 15);
-		if(d->func_mod[i] == NULL)
+		synt->func_mod[i] = malloc(sizeof(char) * 15);
+		if(synt->func_mod[i] == NULL)
 			return NULL;
 	}
 
 	for(size_t i = 0; i < 3; i++)
 		for(size_t j = 0; j < 3; j++)
-			d->parametros[i][j] = 0;
+			synt->parametros[i][j] = 0;
 
 	free(q);
 
-	return d;
+	return synt;
 }
 
-void destruir_dato_t(dato_t *d){
-	free(d->frecuencia);
-	free(d->intensidad);
+void destruir_synt_t(synt_t *synt){
+	free(synt->frecuencia);
+	free(synt->intensidad);
 
 	for(size_t i = 0; i < 3; i++)
-		free(d->func_mod[i]);
+		free(synt->func_mod[i]);
 
-	free(d);
+	free(synt);
 }
 
 char **split(const char *s, const int *anchos, size_t ncampos){
@@ -176,9 +159,7 @@ bool leer_func_mod(char *s, char *func_mod, float parametros[3]){
     		for(j = 0; s[j] != ' '; j++)
     			func_mod[j] = s[j];
 
-    		n += (j + 1); //Resuelve error de que no esta inicializado func_mod.
-
-    		//n += strlen(func_mod) + 1;
+    		n += (j + 1);
     	}
 
     	for(size_t i = 0; i < 8; i++)
@@ -197,44 +178,19 @@ bool leer_func_mod(char *s, char *func_mod, float parametros[3]){
     return true;
 }
 
+void imprimir_synt_t(synt_t *synt){
 
-int main(int argc, char *argv[]){
+	printf("%d\n", synt->cantidad_armonicos);
 
-	FILE *s = fopen(argv[1], "r");
-	if(s == NULL){
-		fclose(s);
-		return 1;
-	}
-
-	dato_t *dato = crear_dato_t(s);
-	if(dato == NULL){
-		fclose(s);
-		return 1;
-	}
-
-	if(! leer_sintetizador(s, dato->cantidad_armonicos, dato->frecuencia, dato->intensidad, dato->func_mod, dato->parametros)){
-		destruir_dato_t(dato);
-		fclose(s);
-		return 1;
-	}
-
-	printf("%d\n", dato->cantidad_armonicos);
-
-	for(size_t i = 0; i < dato->cantidad_armonicos; i++)
-		printf("%d %f\n", dato->frecuencia[i], dato->intensidad[i]);
+	for(size_t i = 0; i < synt->cantidad_armonicos; i++)
+		printf("%d %f\n", synt->frecuencia[i], synt->intensidad[i]);
 
 	for(size_t i = 0; i < 3; i++){
-		printf("%s ", dato->func_mod[i]);
+		printf("%s ", synt->func_mod[i]);
 
 		for(size_t j = 0; j < 3; j++)
-			printf("%f ", dato->parametros[i][j]);
+			printf("%f ", synt->parametros[i][j]);
 
 		printf("\n");
 	}
-
-
-	destruir_dato_t(dato);
-	fclose(s);
-
-	return 0;
 }

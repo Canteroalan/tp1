@@ -15,7 +15,15 @@ enum {EVNOTA_NOTA, EVNOTA_VELOCIDAD};
 enum {METAEVENTO_TIPO, METAEVENTO_LONGITUD};
 
 
-note_t *leer_notas(FILE *f) {
+note_t *crear_note_t(void){
+    note_t *note = malloc(sizeof(note_t) * 20); //Primeras 20 notas.
+    if(note == NULL){
+        fprintf(stderr, "Fallo malloc note\n");
+        return NULL;
+    }
+}
+
+bool leer_notas(FILE *f, note_t *note) {
 
     // LECTURA DEL ENCABEZADO:
     formato_t formato;
@@ -24,15 +32,9 @@ note_t *leer_notas(FILE *f) {
 
     if(! leer_encabezado(f, &formato, &numero_pistas, &pulsos_negra)) {
         fprintf(stderr, "Fallo lectura encabezado\n");
-        return NULL;
+        return 0;
     }
 
-
-    note_t *note = malloc(sizeof(note_t) * 20); //Primeras 20 notas.
-    if(note == NULL){
-		fprintf(stderr, "Fallo malloc note\n");
-    	return NULL;
-    }
 
     size_t encendida = 0; //Cuenta la cantidad de note_t encendidas.
     size_t apagada = 0;	//Cuenta la cantidad de note_t apagadas.
@@ -45,7 +47,7 @@ note_t *leer_notas(FILE *f) {
         uint32_t tamagno_pista;
         if(! leer_pista(f, &tamagno_pista)) {
             fprintf(stderr, "Fallo lectura pista\n");
-            return NULL;
+            return 0;
         }
 
         evento_t evento;
@@ -64,7 +66,7 @@ note_t *leer_notas(FILE *f) {
             uint8_t buffer[EVENTO_MAX_LONG];
             if(! leer_evento(f, &evento, &canal, &longitud, buffer)) {
                 fprintf(stderr, "Error leyendo evento\n");
-                return NULL;
+                return 0;
             }
 
             // PROCESAMOS EL EVENTO:
@@ -84,7 +86,7 @@ note_t *leer_notas(FILE *f) {
                 signed char octava;
                 if(! decodificar_nota(buffer[EVNOTA_NOTA], &nota, &octava)) {
                     fprintf(stderr, "Error leyendo nota\n");
-                    return NULL;
+                    return 0;
                 }
 
                 //GUARDADO DE DATOS DE NOTE:
@@ -105,7 +107,7 @@ note_t *leer_notas(FILE *f) {
                 	note_t *aux = realloc(note, sizeof(note_t) * 20);
                 	if(aux == NULL){
                 		free(note);
-                		return NULL;
+                		return 0;
                 	}
 
                 	mem += 20;
@@ -118,5 +120,9 @@ note_t *leer_notas(FILE *f) {
     for(size_t i = 0; i < encendida; i++)
     	printf("Nota[%zd]: intensidad = %f, t0 = %d, duracion = %d, octava = %d, nota = %s\n", i, note[encendida].intensidad, note[encendida].t0, note[encendida].duracion, note[encendida].octava, note[encendida].nota);
 
-    return note;
+    return 1;
+}
+
+void destruir_note_t(note_t *note){
+    free(note);
 }
