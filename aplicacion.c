@@ -71,22 +71,14 @@ tramo_t *modulacion(tramo_t *t, synt_t *synt){
 
     funcion_t func[3];
 
-    for(size_t i = 0; i < 3; i++){
-	
-	    func[i] = crear_funcion_t(synt->func_mod[i]);
-    	if(func[i] == NULL)
-    		return NULL;
-    }
-
-
     for(size_t i = 0; i < t->n; i++){
 		if(i < n_ataque)
-    		t->v[i] = t->v[i] * traducir_funcion(func[0]);//(la funcion correspondiente de modulacion de ataque );
+    		t->v[i] = t->v[i] * codificar_funcion(func[0]);//(la funcion correspondiente de modulacion de ataque );
 
 	    else if(i < n_sostenido)
-	        t->v[i] = t->v[i] * traducir_funcion(func[1]);//(la funcion correspondiente de modulacion);
+	        t->v[i] = t->v[i] * codificar_funcion(func[1]);//(la funcion correspondiente de modulacion);
 
-        t->v[i] = t->v[i] * traducir_funcion(func[2]);//(la funcion de decaimiento);
+        t->v[i] = t->v[i] * codificar_funcion(func[2]);//(la funcion de decaimiento);
    }
 
    return t;

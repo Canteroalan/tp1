@@ -2,28 +2,6 @@
 #define FUNCIONES.H
 
 
-
-
-typedef enum {
-	CONSTANT,
-	LINEAR,
-	INVLINEAR,
-	SIN,
-	EXP,
-	INVEXP,
-	QUARTCOS,
-	QUARTSIN,
-	HALFCOS,
-	HALFSIN,
-	LOG,
-	INVLOG,
-	TRI,
-	PULSES
-}funciones_t;
-
-funcion_t *crear_funcion_t(char *s);
-void destruir_funcion_t(funcion_t func);
-
 float modulacion_constante(double t, float params[3]);
 float modulacion_linear(double t, float params[3]);
 float modulacion_invlinear(double t, float params[3]);
@@ -39,6 +17,6 @@ float modulacion_invlogaritmo(double t, float params[3]);
 float modulacion_tri(double t, float params[3]);
 float modulacion_pulsos(double t, float params[3]);
 
-const float traducir_funcion(funcion_t f);
+const float codificar_funcion(char *s);
 
 #endif

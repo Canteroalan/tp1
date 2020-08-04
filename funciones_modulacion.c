@@ -13,12 +13,12 @@
 
 typedef float (*funcion_t)(double, float [3]);
 
-typedef struct traduccion_funcion {
+struct traduccion_funcion {
 	float (*funcion)(double, float [3]);
 	char *cadena;
-}funcion_t;
+};
 
-static const funcion_t funciones[] = {
+static const traduccion_funcion funciones[] = {
     {modulacion_constante, "CONSTANT"},
     {modulacion_linear, "LINEAR"},
     {modulacion_invlinear, "INVLINEAR"},
@@ -34,29 +34,6 @@ static const funcion_t funciones[] = {
     {modulacion_tri, "TRI"},
     {modulacion_pulsos, "PULSES"}
 };
-
-
-funcion_t *crear_funcion_t(char *s){
-	funcion_t *func = malloc(sizeof(funcion_t));
-	if(func == NULL)
-		return NULL;
-
-	func->cadena = malloc(sizeof(char ) * MAX);
-	if(func->cadena == NULL){
-		free(func);
-		return NULL;
-	}
-
-	func->cadena = s;
-
-	return func;
-
-}
-
-void destruir_funcion_t(funcion_t func){
-	free(func->cadena);
-	free(func);
-}
 
 
 float modulacion_constante(double t, float params[3]) {
@@ -127,10 +104,12 @@ float modulacion_pulsos(double t, float params[3]) {
 }
 
 
-const float traducir_funcion(funcion_t f){
-	return funciones[f].funcion;
+const float codificar_funcion(char *s){
+	size_t i = 0;
+
+	while(strcmp(s, funciones[i]))
+		i++;
+
+	return funciones[i].funcion;
 }
-
-
-
 
