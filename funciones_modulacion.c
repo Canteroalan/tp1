@@ -53,6 +53,11 @@ funcion_t *crear_funcion_t(char *s){
 
 }
 
+void destruir_funcion_t(funcion_t func){
+	free(func->cadena);
+	free(func);
+}
+
 
 float modulacion_constante(double t, float params[3]) {
     return 1;

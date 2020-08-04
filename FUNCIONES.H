@@ -22,6 +22,7 @@ typedef enum {
 }funciones_t;
 
 funcion_t *crear_funcion_t(char *s);
+void destruir_funcion_t(funcion_t func);
 
 float modulacion_constante(double t, float params[3]);
 float modulacion_linear(double t, float params[3]);
