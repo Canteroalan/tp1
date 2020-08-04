@@ -6,10 +6,10 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "FUNCIONES.h"
+#include "FUNCIONES.H"
 
 #define PI 3.141592653589793
-
+#define MAX 256
 
 typedef float (*funcion_t)(double, float [3]);
 
@@ -36,6 +36,22 @@ static const funcion_t funciones[] = {
 };
 
 
+funcion_t *crear_funcion_t(char *s){
+	funcion_t *func = malloc(sizeof(funcion_t));
+	if(func == NULL)
+		return NULL;
+
+	func->cadena = malloc(sizeof(char ) * MAX);
+	if(func->cadena == NULL){
+		free(func);
+		return NULL;
+	}
+
+	func->cadena = s;
+
+	return func;
+
+}
 
 
 float modulacion_constante(double t, float params[3]) {

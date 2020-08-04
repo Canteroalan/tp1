@@ -21,6 +21,8 @@ typedef enum {
 	PULSES
 }funciones_t;
 
+funcion_t *crear_funcion_t(char *s);
+
 float modulacion_constante(double t, float params[3]);
 float modulacion_linear(double t, float params[3]);
 float modulacion_invlinear(double t, float params[3]);

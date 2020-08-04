@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include "TRAMO.H"
+#include "FUNCIONES.H"
 #include "SINTETIZADOR.H"
 #include "NOTA.H"
 
@@ -63,19 +64,20 @@ void destruir_matriz(float **r, size_t cantidad_de_columnas){ //si bien siempre 
 }
 
 
+//HAY QUE CREAR TRADUCCION DE FUNCIONES DE MODULACION.
 
 
 //prototipo para funcion m(t) de modulacion (usamos la relacion que hay entre (i en el for) y el tiempo puede ser que no este bien el n_de_sostenido 
 
 tramo_t *modulacion(tramo_t *t, synt_t *synt){
-    size_t n_de_ataque = t->f_m * (parametros[0][0] - t->t0)      //aca estas calulando hasta que n se aplica la funcion de ataque 
-    size_t n_de_sostenido = t->f_m * (parametros[0][1] - parametros[0][0]) //calculas hasta que n se aplica el sostenido
+    size_t n_ataque = t->f_m * (synt->parametros[0][0] - t->t0)      //aca estas calulando hasta que n se aplica la funcion de ataque 
+    size_t n_sostenido = t->f_m * (synt->parametros[0][1] - synt->parametros[0][0]) //calculas hasta que n se aplica el sostenido
 
     for(size_t i = 0; i < t->n; i++){
-		if(i < n_de_ataque)
-    		t->v[i] = t->v[i] * //(la funcion correspondiente de modulacion de ataque );
+		if(i < n_ataque)
+    		t->v[i] = t->v[i] * traducir_funcion(funcion_t f);//(la funcion correspondiente de modulacion de ataque );
 
-	    if(i > n_de_ataque && i < n_de_sostenido)
+	    if(i > n_ataque && i < n_sostenido)
 	        t->v[i] = t->v[i] *  //(la funcion correspondiente de modulacion);
 
         if(i > n_de_sostenido)
