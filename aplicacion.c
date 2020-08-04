@@ -51,10 +51,6 @@ float **generar_matriz_armonicos(synt_t synt){      // carga los datos recibidos
 	return armonicos;
 }
 
-// Creo que se puede hacer sin usar memoria dinamica ya que tenemos la cant_armonicos.
-// f[] son las frecuencias, a[] las intensidades leidas por sintetizador.txt. 
-// Creo que esta bien lo que hizo Alan ya que no podria devolver el vector. PREGUNTAR ALAN
-
 
 void destruir_matriz(float **r, size_t cantidad_de_columnas){ //si bien siempre vamos a tener dos columnas en la matriz por las dudas puse la cantidad de columnas.
 	for(size_t i = 0; i < cantidad_de_columnas; i++)
@@ -73,15 +69,24 @@ tramo_t *modulacion(tramo_t *t, synt_t *synt){
     size_t n_ataque = t->f_m * (synt->parametros[0][0] - t->t0)      //aca estas calulando hasta que n se aplica la funcion de ataque 
     size_t n_sostenido = t->f_m * (synt->parametros[0][1] - synt->parametros[0][0]) //calculas hasta que n se aplica el sostenido
 
+    funcion_t func[3];
+
+    for(size_t i = 0; i < 3; i++){
+	
+	    func[i] = crear_funcion_t(synt->func_mod[i]);
+    	if(func[i] == NULL)
+    		return NULL;
+    }
+
+
     for(size_t i = 0; i < t->n; i++){
 		if(i < n_ataque)
-    		t->v[i] = t->v[i] * traducir_funcion(funcion_t f);//(la funcion correspondiente de modulacion de ataque );
+    		t->v[i] = t->v[i] * traducir_funcion(func[0]);//(la funcion correspondiente de modulacion de ataque );
 
-	    if(i > n_ataque && i < n_sostenido)
-	        t->v[i] = t->v[i] *  //(la funcion correspondiente de modulacion);
+	    else if(i < n_sostenido)
+	        t->v[i] = t->v[i] * traducir_funcion(func[1]);//(la funcion correspondiente de modulacion);
 
-        if(i > n_de_sostenido)
-	        t->v[i] = t->v[i] *  //(la funcion de decaimiento);
+        t->v[i] = t->v[i] * traducir_funcion(func[2]);//(la funcion de decaimiento);
    }
 
    return t;
