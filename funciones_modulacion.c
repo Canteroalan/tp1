@@ -9,7 +9,6 @@
 #include "FUNCIONES.H"
 
 #define PI 3.141592653589793
-#define MAX 256
 
 typedef float (*funcion_t)(double, float [3]);
 
