@@ -13,10 +13,10 @@
 
 typedef float (*funcion_t)(double, float [3]);
 
-struct traduccion_funcion {
+typedef struct traduccion_funcion {
 	float (*funcion)(double, float [3]);
 	char *cadena;
-};
+}funcion_t;
 
 static const funcion_t funciones[] = {
     {modulacion_constante, "CONSTANT"},
@@ -106,6 +106,9 @@ float modulacion_pulsos(double t, float params[3]) {
 }
 
 
+const float traducir_funcion(funcion_t f){
+	return funciones[f].funcion;
+}
 
 
 
