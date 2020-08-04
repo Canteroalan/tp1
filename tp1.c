@@ -82,7 +82,13 @@ int main(int argc, char *argv[]){
 	imprimir_synt_t(synt);
 
 
+	// Se tiene que generar el muestreo del tramo f(t):
+	// Frecuencia e intensidad de cada nota, armonicos de la matriz generada con generar_matriz_armonicos.
 
+	// Luego se lo multiplica por las funciones de modulacion en los distintos tiempos m(t):
+	// Llamar a una funcion modulacion() que reciba como parametros las 3 funciones de modulacion y sus parametros.
+
+	// Para finalizar muliplicar f(t) con m(t) en sus intervalos correspondientes.
 
 
 

@@ -1,28 +1,31 @@
-#include<stdio.h>
-#include<stdlib.h>
-#include<math.h>
-#include<stdint.h>
-#include<string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <stdint.h>
+#include <string.h>
 
-#include"TRAMO.H"
+#include "TRAMO.H"
+#include "SINTETIZADOR.H"
+#include "NOTA.H"
 
 
 
-float leer_frecuencia_tramo(signed char octava, const char *nota){ //transfoma la nota del note_t en su numero posicional(nota_t). 
+
+float leer_frecuencia_tramo(note_t *nota){ //transfoma la nota del note_t en su numero posicional(nota_t). 
 	int i;
 
 	for(i = 0; i < 12; i++)
-		if(! strcmp(nota, notas[i]))
+		if(! strcmp(nota->nota, notas[i]))
 			break;
 
-	return 440 * (pow((1.0) / 2, 4 - octava)) * (pow(2, (i - 9) / 12));
+	return 440 * (pow((1.0) / 2, 4 - nota->octava)) * (pow(2, (i - 9) / 12));
 }
 
-double calcular_tf(double t0, uint32_t duracion, float td){  //genera el tiempo final para usar en tramo_muestreo.
-	return t0 + duracion + td;
+double calcular_tf(note_t *nota, float td){  //genera el tiempo final para usar en tramo_muestreo.
+	return nota->t0 + nota->duracion + td;
 }
 
-float **generar_matriz_armonicos(float *frecuencia, float *intensidad, size_t cant_armonicos){      // carga los datos recibidos de los vectores multiplicador,intensidad en una matriz.
+float **generar_matriz_armonicos(synt_t synt){      // carga los datos recibidos de los vectores multiplicador,intensidad en una matriz.
 
 	float **armonicos = malloc(2 * sizeof(float *));
 	if(armonicos == NULL)
@@ -30,7 +33,7 @@ float **generar_matriz_armonicos(float *frecuencia, float *intensidad, size_t ca
 
 	for(size_t i = 0; i < 2; i++){
 
-		float *almacenador = malloc(cantidad_armonicos * sizeof(float));
+		float *almacenador = malloc(synt->cantidad_armonicos * sizeof(float));
 		if(almacenador == NULL){
 			free(armonicos);
 			return NULL;
@@ -39,9 +42,9 @@ float **generar_matriz_armonicos(float *frecuencia, float *intensidad, size_t ca
 		armonicos[i] = almacenador;
 	}
 
-	for(size_t j = 0; j < cant_armonicos; j++){
-		armonicos [j][0] = frecuencia[j];
-		armonicos [j][1] = intensidad[j];
+	for(size_t j = 0; j < synt->cant_armonicos; j++){
+		armonicos [j][0] = synt->frecuencia[j];
+		armonicos [j][1] = synt->intensidad[j];
 	}
 
 	return armonicos;
@@ -52,7 +55,7 @@ float **generar_matriz_armonicos(float *frecuencia, float *intensidad, size_t ca
 // Creo que esta bien lo que hizo Alan ya que no podria devolver el vector. PREGUNTAR ALAN
 
 
-void destruir_matriz(float **r, size_t cantidad_de_columnas){ //si bien siempre vamoos a tener dos columnas en la matriz por las dudas puse la cantidad de columnas.
+void destruir_matriz(float **r, size_t cantidad_de_columnas){ //si bien siempre vamos a tener dos columnas en la matriz por las dudas puse la cantidad de columnas.
 	for(size_t i = 0; i < cantidad_de_columnas; i++)
 		free(r[i]);
 	
@@ -62,11 +65,11 @@ void destruir_matriz(float **r, size_t cantidad_de_columnas){ //si bien siempre 
 
 
 
-//prototipo para funcion m(t) de modulacion ( usamos la relacion que hay entre (i en el for) y el tiempo puede ser que no este bien el n_de_sostenido 
+//prototipo para funcion m(t) de modulacion (usamos la relacion que hay entre (i en el for) y el tiempo puede ser que no este bien el n_de_sostenido 
 
-tramo_t *modulacion(tramo_t *t){
-    size_t n_de_ataque = t->f_m * (tiempo de ataque - t->t0)      //aca estas calulando hasta que n se aplica la funcion de ataque 
-    size_t n_de_sostenido = t->f_m * (tiempo de sostenido - tiempo de ataque) //calculas hasta que n se aplica el sostenido
+tramo_t *modulacion(tramo_t *t, synt_t *synt){
+    size_t n_de_ataque = t->f_m * (parametros[0][0] - t->t0)      //aca estas calulando hasta que n se aplica la funcion de ataque 
+    size_t n_de_sostenido = t->f_m * (parametros[0][1] - parametros[0][0]) //calculas hasta que n se aplica el sostenido
 
     for(size_t i = 0; i < t->n; i++){
 		if(i < n_de_ataque)
@@ -83,7 +86,7 @@ tramo_t *modulacion(tramo_t *t){
 }
 
 
-tramo_t * sintetiza_cancion(note_t v[],size_t tamagno,synt_t * w ,int fre_mtro){
+tramo_t *sintetizar_cancion(note_t v[],size_t tamagno,synt_t * w ,int fre_mtro){
 	float ** t=genera_matriz(synt_t->frecuencia,syn_t->intensidad,sint_t->cantidad_armonicos);
 	for(size_t i=0;i<tamagno;i++){
 		float p=_leer_frecuencia(v[i]->octava,v[i]->nota);
