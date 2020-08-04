@@ -84,7 +84,7 @@ bool leer_pista(FILE *f, uint32_t *tamagno){
 	return true;
 }
 
-bool leer_tiempo(FILE *f, uint32_t *tiempo){
+bool leer_tiempo(FILE *f, double *tiempo){
 	uint8_t t[4];
 	size_t i = 0;
 
@@ -98,6 +98,8 @@ bool leer_tiempo(FILE *f, uint32_t *tiempo){
 	for(size_t n = 0; n <= i; n++){
 		*tiempo |= ((t[n] & MASK_TIEMPO) << (SHIFT_TIEMPO * (i - n)));
 	}
+
+	//Aca hay que convertir *timepo a double con los pulsos por segundo
 
 	return true;
 }

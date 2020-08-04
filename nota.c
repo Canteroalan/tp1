@@ -54,14 +54,14 @@ bool leer_notas(FILE *f, note_t *note) {
         evento_t evento;
         char canal;
         int longitud;
-        uint32_t tiempo = 0;
+        double tiempo = 0;
 
         // ITERAMOS LOS EVENTOS:
         while(1) {
-            uint32_t delta_tiempo = 0;
+            double delta_tiempo = 0;
             leer_tiempo(f, &delta_tiempo);
             tiempo += delta_tiempo;
-            printf("[%d] ", tiempo);
+            printf("[%f] ", tiempo);
 
             // LECTURA DEL EVENTO:
             uint8_t buffer[EVENTO_MAX_LONG];
