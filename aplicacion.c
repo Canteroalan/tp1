@@ -4,65 +4,82 @@
 #include<stdint.h>
 #include<string.h>
 
-#include"tramo.h"
+#include"TRAMO.H"
 
 
 
-float _leer_frecuencia(signed char octava,const char* nota){ //transfoma la nota del note_t en su numero  posicional(nota_t). 
+float leer_frecuencia_tramo(signed char octava, const char *nota){ //transfoma la nota del note_t en su numero posicional(nota_t). 
 	int i;
-	for(i=0;i<12;i++){
-		if(!strcmp(nota,notas[i]))
+
+	for(i = 0; i < 12; i++)
+		if(! strcmp(nota, notas[i]))
 			break;
-	}
-	return 440*(pow((1.0)/2,4-octava))*(pow(2,(i-9)/12));
+
+	return 440 * (pow((1.0) / 2, 4 - octava)) * (pow(2, (i - 9) / 12));
 }
 
-double _calcula_tf(double t0,uint32_t duracion,float td){  //genera el tiempo final para usar en tramo_muestreo.
-	return t0+duracion+td;
+double calcular_tf(double t0, uint32_t duracion, float td){  //genera el tiempo final para usar en tramo_muestreo.
+	return t0 + duracion + td;
 }
 
-float ** genera_matriz(float *a,float *b,size_t n){      // carga los datos recibidos de los vectores multiplicador,intensidad en una matriz.
-	float ** armonicos=malloc(2*sizeof(float*));
+float **generar_matriz_armonicos(float *frecuencia, float *intensidad, size_t cant_armonicos){      // carga los datos recibidos de los vectores multiplicador,intensidad en una matriz.
 
+	float **armonicos = malloc(2 * sizeof(float *));
 	if(armonicos == NULL)
 		return NULL;
 
-	for(int i=0;i<2;i++){
-		float * almacenador=malloc(n*sizeof(float));
+	for(size_t i = 0; i < 2; i++){
 
+		float *almacenador = malloc(cantidad_armonicos * sizeof(float));
 		if(almacenador == NULL){
 			free(armonicos);
 			return NULL;
 		}
-		armonicos[i]=almacenador;
+
+		armonicos[i] = almacenador;
 	}
-	for(size_t j=0;j<n;j++){
-		armonicos [j][0]=a[j];
-		armonicos [j][1]=b[j];
+
+	for(size_t j = 0; j < cant_armonicos; j++){
+		armonicos [j][0] = frecuencia[j];
+		armonicos [j][1] = intensidad[j];
 	}
+
 	return armonicos;
 }
-//prototipo para funcion m(t) de modularizacion ( usamos la relacion que hay entre (i en el for) y el tiempo puede ser que no este bien el n_de_sostenido 
 
-tramo_t* modularizacion(tramo_t * t){
-           size_t n_de_ataque=t->f_m*(tiempo de ataque - t->t0)      //aca estas calulando hasta que n se aplica la funcion de ataque 
-	   size_t n_de_sostenido=t->f_m(tiempo de sostenido-tiempo de ataque) //calculas hasta que n se aplica el sostenido
-	   for(size_t i=0;i<t->n;i++){
-	          if(i<n_de_ataque)
-		          t->v[i]=t->v[i]* //(la funcion correspondiente de modulacion de ataque );
-	          if(i>n_de_ataque && i<n_de_sostenido)
-		         t->v[i]=t->v[i]*  //(la funcion correspondiente de modulacion);
-	          if(i>n_de_sostenido)
-		         t-> v[i]=t->v[i]*  //(la funcion de decaimiento);
-	   }
-	   return t;
+// Creo que se puede hacer sin usar memoria dinamica ya que tenemos la cant_armonicos.
+// f[] son las frecuencias, a[] las intensidades leidas por sintetizador.txt. 
+// Creo que esta bien lo que hizo Alan ya que no podria devolver el vector. PREGUNTAR ALAN
+
+
+void destruir_matriz(float **r, size_t cantidad_de_columnas){ //si bien siempre vamoos a tener dos columnas en la matriz por las dudas puse la cantidad de columnas.
+	for(size_t i = 0; i < cantidad_de_columnas; i++)
+		free(r[i]);
+	
+	free(r);
 }
 
 
-void destruir_matriz(float ** r,int cantidad_de_columnas){ //si bien siempre vamoos a tener dos columnas en la matriz por las dudas puse la cantidad de columnas.
-	for(size_t i=0;i<cantidad_de_columnas;i++)
-		free(r[i]);
-	free(r);
+
+
+//prototipo para funcion m(t) de modulacion ( usamos la relacion que hay entre (i en el for) y el tiempo puede ser que no este bien el n_de_sostenido 
+
+tramo_t *modulacion(tramo_t *t){
+    size_t n_de_ataque = t->f_m * (tiempo de ataque - t->t0)      //aca estas calulando hasta que n se aplica la funcion de ataque 
+    size_t n_de_sostenido = t->f_m * (tiempo de sostenido - tiempo de ataque) //calculas hasta que n se aplica el sostenido
+
+    for(size_t i = 0; i < t->n; i++){
+		if(i < n_de_ataque)
+    		t->v[i] = t->v[i] * //(la funcion correspondiente de modulacion de ataque );
+
+	    if(i > n_de_ataque && i < n_de_sostenido)
+	        t->v[i] = t->v[i] *  //(la funcion correspondiente de modulacion);
+
+        if(i > n_de_sostenido)
+	        t->v[i] = t->v[i] *  //(la funcion de decaimiento);
+   }
+
+   return t;
 }
 
 
@@ -86,10 +103,6 @@ tramo_t * sintetiza_cancion(note_t v[],size_t tamagno,synt_t * w ,int fre_mtro){
 }
 
 // me quedo por pensar como escalar el tramo para pasarselo al wave , espero que se entienda todo lo anterior 
-
-
-	       	
-
 
 
 
