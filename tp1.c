@@ -54,7 +54,9 @@ int main(int argc, char *argv[]){
 		return 1;
 	}
 
-	if(! leer_notas(s, note)){
+	size_t cant_notas;
+
+	if(! leer_notas(s, note, &cant_notas)){
 		destruir_note_t(note);
 		fclose(s);
 		fclose(m);

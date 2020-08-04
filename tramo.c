@@ -83,8 +83,8 @@ tramo_t *modulacion(tramo_t *t, synt_t *synt){
 }
 
 
-tramo_t *sintetizar_cancion(note_t v[],size_t tamagno,synt_t * w ,int fre_mtro){
-	float ** t=genera_matriz(synt_t->frecuencia,syn_t->intensidad,sint_t->cantidad_armonicos);
+tramo_t *sintetizar_cancion(note_t note[], size_t cant_notas, synt_t *synt , int f_m){
+	float ** t=genera_matriz(synt->frecuencia,synt->intensidad,sint->cantidad_armonicos);
 	for(size_t i=0;i<tamagno;i++){
 		float p=_leer_frecuencia(v[i]->octava,v[i]->nota);
 		double tf=_calcula_tf(v[i]->t0,v[i]->duracion,w->parametros[0][3]);//params [0][3] <- creo que esa es la posicion donde se encuntra tiempo de decaimiento
