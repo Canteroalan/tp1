@@ -57,14 +57,14 @@ void destruir_matriz(float **r, size_t cantidad_de_columnas){
 	
 	free(r);
 }
-void determina_max_and_min(float max,float min,float v){ // funcion que determina maximo y minimo. 
-	if(v>max)
-		max=v;
-	if(v<min)
-		min=v;
+void determina_max_and_min(float* max,float* min,float v){ // funcion que determina maximo y minimo. 
+	if(v>*max)
+		*max=v;
+	if(v<*min)
+		*min=v;
 }
 
-tramo_t  *modulacion(tramo_t *t, synt_t *p,float max,float min){
+tramo_t  *modulacion(tramo_t *t, synt_t *p,float* h,float *l){
    	size_t n_ataque = t->f_m * p->parametros[0][0];
    	size_t n_sostenido = t->f_m * p->parametros[0][1] + n_ataque;
 	float max=0;
@@ -84,13 +84,15 @@ tramo_t  *modulacion(tramo_t *t, synt_t *p,float max,float min){
                 t->v[i] = t->v[i] * modula_funcion(p->func_mod[2], p->parametros[2], tiempo);
 		determina_max_and_min(max,min,t->v[i]);
 	}
-
+        *h=max;
+	*l=min;
     return t;
 }
 
 tramo_t *sintetizar_cancion(note_t v[], size_t tamagno, synt_t * w , int f_m){
 	float grand_max=0; //aca se va  a guardar el valor mas grande de los maximos 
 	float grand_min=0; //aca se va  a guardar el valor mas chico de los minimos
+	float max,min;
 	float **t = genera_matriz_armonicos(w);
 	if(t == NULL)
 		return NULL;
@@ -100,19 +102,7 @@ tramo_t *sintetizar_cancion(note_t v[], size_t tamagno, synt_t * w , int f_m){
 		destruir_matriz(t);
 		return NULL;
 	}
-	float * maximos=malloc(tamagno*sizeof(float)); // esto va almacenar los diferentes maximos de los tramos 
-	if(maximos == NULL){
-		destruir_matriz(t);
-		tramo_destruir(destino);
-		return NULL;
-	}
-	float * minimos=malloc(tamagno*sizeof(float)); // esto va almacenar los diferentes minimos de los tramos 
-	if(minimos == NULL){
-		destruir_matriz(t);
-		tramo_destruir(t);
-		free(maximos);
-		return NULL;
-	}
+	
 
 	for(size_t i = 0; i < tamagno; i++){
 		float p = leer_frecuencia_tramo(v[i]);
@@ -124,12 +114,11 @@ tramo_t *sintetizar_cancion(note_t v[], size_t tamagno, synt_t * w , int f_m){
 			return NULL;
 		}
 
-		tramo_t *muestra_modulada = modulacion(muestrea_nota, w,maximos[i],minimos[i]);
-		if(maximos[i]>grand_max)                                              
-			grand_max=maximos[i];
-		if(minimos[i]<grand_min)
-			grand_min=minimos[i];
-
+		tramo_t *muestra_modulada = modulacion(muestrea_nota,w,&max,&min);
+		if(max>grand_max)                                              
+			grand_max=max;
+		if(min<grand_min)
+			grand_min=min;
 
 		if(! tramo_extender(destino, muestra_modulada))
 			return NULL;
