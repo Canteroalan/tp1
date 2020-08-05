@@ -102,7 +102,7 @@ float modulacion_pulsos(double t, float params[3]) {
     return 1;
 }
 
-
+// nacho fijate que esta bien lo que hiciste solo te falto agregar los parametros que recibis de synt_t
 const float codificar_funcion(char *s){
 	size_t i = 0;
 
@@ -110,5 +110,13 @@ const float codificar_funcion(char *s){
 		i++;
 
 	return funciones[i].funcion;
+}
+// lo hago aca pero te dejo los cambios para que veas la diferencia
+
+const float modula_funcion(char *s,float *parametros,double tiempo){
+	size_t i=0;
+	while(strcmp(s,funciones[i].cadena))
+		i++;
+	return funciones[i].funcion(tiempo,parametro);
 }
 
