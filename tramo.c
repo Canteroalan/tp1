@@ -264,10 +264,21 @@ tramo_t *sintetizar_cancion(FILE *midi, FILE *sintetizador, int f_m){
 	tramo_destruir(muestrea_nota);
 	destruir_matriz(t);
 
-	return destino;
+
+	float escala;
+	//falta unirlo con crear_factor_escala.
+	int16_t *vect_wave = crear_muestras(destino, escala, n);
+	if(vect_wave == NULL){
+		tramo_destruir(destino);
+		return NULL;
+	}
+
+	tramo_destruir(destino);
+
+	return vect_wave;
 }
 
-float crea_factor_escala(float maximo, float minimo){
+float crear_factor_escala(float maximo, float minimo){
 	float a = MAX_VALOR / maximo;
 	float b = MIN_VALOR / minimo;
 	
@@ -279,7 +290,7 @@ float crea_factor_escala(float maximo, float minimo){
 
 // aca el float v vendria a ser lo que devuelve la funcion que calcula el factor de escala 
 
-int16_t *crea_muestras(tramo_t *t, float v){
+int16_t *crear_muestras(tramo_t *t, float v, size_t *n;){
 	
 	int16_t *vect_wave = malloc(t->n * sizeof(int16_t));
 	if(vect_wave == NULL)
@@ -288,6 +299,8 @@ int16_t *crea_muestras(tramo_t *t, float v){
 	for(size_t i = 0; i < t->n; i++)
 		vect_wave[i] = t->v[i] * v;
 	
+	*n = t->n
+
 	return vect_wave;
 }
 

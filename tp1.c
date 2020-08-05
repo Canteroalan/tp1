@@ -45,34 +45,25 @@ int main(int argc, char *argv[]){
 	int pps = leer_pulso(argc, argv);
 
 
-	tramo_t * tramo = sintetizar_cancion(m, s, f_m);
-	if(tramo == NULL){
+	size_t n;
+
+	int16_t *v = sintetizar_cancion(m, s, f_m, &n);
+	if(v == NULL){
 		fclose(s);
 		fclose(m);
 		fclose(w);
 		return 1;
 	}
-	
-
-
-	
-
 
 	//imprimir_synt_t(synt);
 
-
-
-
-	if(! escribir_wave(w, n, f_m, int16_t *v)){
+	if(! escribir_wave(w, n, f_m, v)){
 		tramo_destruir(tramo);
 		fclose(s);
 		fclose(m);
 		fclose(w);
 		return 1;
 	}
-
-
-
 
 
 	fclose(s);
