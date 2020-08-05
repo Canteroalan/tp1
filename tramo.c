@@ -155,7 +155,7 @@ double calcular_tf(note_t *nota, synt_t *s){
 	return nota->t0 + nota->duracion + s->parametros[0][3];
 }
 
-void determina_max_and_min(float *max, float *min, float v){ // funcion que determina maximo y minimo. 
+void determina_max_and_min(float *max, float *min, float v){  
 	if(v > *max)
 		*max = v;
 
@@ -174,30 +174,30 @@ tramo_t *modulacion(tramo_t *t, synt_t s, float *h, float *l){
 
 		if(i < n_ataque){
 			t->v[i] = t->v[i] * modula_funcion(s->func_mod[0], s->parametros[0][0], tiempo);
-			determina_max_and_min(max, min, t->v[i]);
+			determina_max_and_min(&max, &min, t->v[i]);
 		}
 
         if(i > n_ataque && i < n_sostenido){
 		t->v[i] = t->v[i] * modula_funcion(s->func_mod[1], s->parametros[0][1], tiempo);
-		determina_max_and_min(max, min, t->v[i]);
+		determina_max_and_min(&max,&min, t->v[i]);
 		}
 
 		if(i > n_sostenido && i < t->n){
         	t->v[i] = t->v[i] * modula_funcion(s->func_mod[2], s->parametros[0][2], tiempo);
-			determina_max_and_min(max, min, t->v[i]);
+			determina_max_and_min(&max,&min, t->v[i]);
 		}
 
-		t->v[i] = 0; //Esta linea esta ya que en el enunciado dice que para otro t m(t) = 0.
+		t->v[i] = 0;
 	}
     
-    *h = max;
+        *h = max;
 	*l = min;
     
     return t;
 }
 
 
-tramo_t *sintetizar_cancion(FILE *midi, FILE *sintetizador, int f_m){
+int16_t * sintetizar_cancion(FILE *midi, FILE *sintetizador, int f_m,size_t *cantidad){
 	
 	nota_contenedor_t *contenedor = crear_nota_contenedor_t(m);
 	if(contenedor == NULL)
@@ -265,9 +265,7 @@ tramo_t *sintetizar_cancion(FILE *midi, FILE *sintetizador, int f_m){
 	destruir_matriz(t);
 
 
-	float escala;
-	//falta unirlo con crear_factor_escala.
-	int16_t *vect_wave = crear_muestras(destino, escala, n);
+	int16_t *vect_wave = crear_muestras(destino,crear_factor_escala(grand_max,grand_min),cantidad);
 	if(vect_wave == NULL){
 		tramo_destruir(destino);
 		return NULL;
@@ -287,8 +285,6 @@ float crear_factor_escala(float maximo, float minimo){
 	
 	return fabs(b);
 }
-
-// aca el float v vendria a ser lo que devuelve la funcion que calcula el factor de escala 
 
 int16_t *crear_muestras(tramo_t *t, float v, size_t *n;){
 	
