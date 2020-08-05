@@ -58,30 +58,45 @@ void destruir_matriz(float **r, size_t cantidad_de_columnas){
 	free(r);
 }
 
-tramo_t  * modulacion(tramo_t *t, synt_t *p,){
-       	size_t n_ataque = t->f_m * p->parametros[0][0];
-       	size_t n_sostenido = t->f_m * p->parametros[0][1] + n_ataque;
+tramo_t  *modulacion(tramo_t *t, synt_t *p){
+   	size_t n_ataque = t->f_m * p->parametros[0][0];
+   	size_t n_sostenido = t->f_m * p->parametros[0][1] + n_ataque;
+
 	for(size_t i = 0; i < t->n; i++){
-		double tiempo=t->t0 +(double)i/t->f_m;
+		double tiempo = t->t0 + (double) i / t->f_m;
+
 		if(i < n_ataque)
-			t->v[i] = t->v[i] * modula_funcion(p->func_mod[0],p->parametros[0],tiempo);
-	        if(i>n_ataque && i < n_sostenido)
-			t->v[i] = t->v[i] * modula_funcion(p->func_mod[1],p->parametros[1],tiempo);
-                t->v[i] = t->v[i] * modula_funcion(p->func_mod[2],p->parametros[2],tiempo);
+			t->v[i] = t->v[i] * modula_funcion(p->func_mod[0], p->parametros[0], tiempo);
+
+        if(i > n_ataque && i < n_sostenido)
+			t->v[i] = t->v[i] * modula_funcion(p->func_mod[1], p->parametros[1], tiempo);
+
+        t->v[i] = t->v[i] * modula_funcion(p->func_mod[2], p->parametros[2], tiempo);
 	}
-        return t;
+
+    return t;
 }
 
-tramo_t *sintetizar_cancion(note_t v[],size_t tamagno,synt_t * w ,int fre_mtro){
-	float ** t=genera_matriz_armonicos(w);
-	for(size_t i=0;i<tamagno;i++){
-		float p=leer_frecuencia_tramo(v[i]);
-		double tf=_calcula_tf(v[i]->t0,v[i]->duracion,w->parametros[0][3]);
-		tramo_t * muestrea_nota=tramo_crear_muestreo(v[i]->t0,tf,fre_mtro,p,v[i]->intensidad,t,w->cantidad_armonicos);
-		tramo_t * muestra_modulada=(muestrea_nota,w);
+tramo_t *sintetizar_cancion(note_t v[], size_t tamagno, synt_t * w , int f_m){
+	float **t = genera_matriz_armonicos(w);
+	if(t == NULL)
+		return NULL;
 
+	for(size_t i = 0; i < tamagno; i++){
+		float p = leer_frecuencia_tramo(v[i]);
+		double tf = calcular_tf(v[i]->t0, v[i]->duracion,w->parametros[0][3]);
+
+		tramo_t *muestrea_nota = tramo_crear_muestreo(v[i]->t0, tf, f_m, p,v[i]->intensidad, t, w->cantidad_armonicos);
+		if(muestrea_nota == NULL){
+			destruir_matriz(t);
+			return NULL;
+		}
+
+		tramo_t *muestra_modulada = (muestrea_nota,cw);
 	}
+
 	destruir_matriz(t);
+	
 	return el tramo con todas las notas sumadas!;
 }
 

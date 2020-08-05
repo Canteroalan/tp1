@@ -43,7 +43,7 @@ int main(int argc, char *argv[]){
 
 	char canal = leer_canal(argc, argv);
 	int frec = leer_frecuencia(argc, argv);
-	int pulso = leer_pulso(argc, argv);
+	int pps = leer_pulso(argc, argv);
 
 	
 	note_t *note = crear_note_t();
@@ -56,7 +56,7 @@ int main(int argc, char *argv[]){
 
 	size_t cant_notas;
 
-	if(! leer_notas(s, note, &cant_notas)){
+	if(! leer_notas(s, note, &cant_notas, pps)){
 		destruir_note_t(note);
 		fclose(s);
 		fclose(m);

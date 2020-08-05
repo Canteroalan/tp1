@@ -24,7 +24,7 @@ note_t *crear_note_t(void){
     return note;
 }
 
-bool leer_notas(FILE *f, note_t *note, size_t *cant_notas) {
+bool leer_notas(FILE *f, note_t *note, size_t *cant_notas, int pps) {
 
     // LECTURA DEL ENCABEZADO:
     formato_t formato;
@@ -59,9 +59,8 @@ bool leer_notas(FILE *f, note_t *note, size_t *cant_notas) {
         // ITERAMOS LOS EVENTOS:
         while(1) {
             double delta_tiempo = 0;
-            leer_tiempo(f, &delta_tiempo);
+            leer_tiempo(f, &delta_tiempo, pps);
             tiempo += delta_tiempo;
-            printf("[%f] ", tiempo);
 
             // LECTURA DEL EVENTO:
             uint8_t buffer[EVENTO_MAX_LONG];
@@ -114,9 +113,6 @@ bool leer_notas(FILE *f, note_t *note, size_t *cant_notas) {
             }
         }
     }
-
-    for(size_t i = 0; i < encendida; i++)
-    	printf("Nota[%zd]: intensidad = %f, t0 = %f, duracion = %d, octava = %d, nota = %s\n", i, note[encendida].intensidad, note[encendida].t0, note[encendida].duracion, note[encendida].octava, note[encendida].nota);
 
     *cant_notas = encendida;
 
