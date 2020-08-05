@@ -8,55 +8,65 @@
 
 
 
-bool escribir_wave(FILE *w){
-	char ChunkId[4] = "RIFF";
-	char Format[4] = "WAVE";
-	char SubChunk1ID[4] = "fmt ";
-	uint32_t SubChunk1Size = 16;
-	uint16_t AudioFormat = 1;
-	uint16_t NumChannels = 1;
-	uint16_t BlockAlign = 2;
-	uint16_t BitsPerSample = 16;
-	char SubChunk2ID[4] = "data";
+bool escribir_wave(FILE *w, size_t n, int f_m){
+	char chunk_id[4] = "RIFF";
+	uint32_t chunk_size = 36 + 2 * n; //falta n.
+	char format[4] = "WAVE";
+	char sub_chunk1_id[4] = "fmt ";
+	uint32_t sub_chunk1_size = 16;
+	uint16_t audio_format = 1;
+	uint16_t num_channels = 1;
+	uint32_t sample_rate = f_m; //frecuencia que leemos de argumentos.
+	uint32_t byte_rate = 2 * sample_rate;
+	uint16_t block_align = 2;
+	uint16_t bits_per_sample = 16;
+	char sub_chunk2_id[4] = "data";
+	uint32_t sub_chunk2_size = 2 * n;
+	//int16_t data[n]; me la dan en los parametros. Secuencia de n muestras.
 
 
 
-	if(fwrite(ChunkId, sizeof(char), 4, w) != 4)
+	if(fwrite(chunk_id, sizeof(char), 4, w) != 4)
 		return false;
 
-	//ChunkSize
-
-	if(fwrite(Format, sizeof(char), 4, w) != 4)
+	if(fwrite(&chunk_size, sizeof(uint32_t), 1, w) != 1)
 		return false;
 
-	if(fwrite(SubChunk1ID, sizeof(char), 4, w) != 4)
+	if(fwrite(format, sizeof(char), 4, w) != 4)
 		return false;
 
-	if(fwrite(&SubChunk1Size, sizeof(uint32_t), 1, w) != 1)
+	if(fwrite(sub_chunk1_id, sizeof(char), 4, w) != 4)
 		return false;
 
-	if(fwrite(&AudioFormat, sizeof(uint16_t), 1, w) != 1)
+	if(fwrite(&sub_chunk1_size, sizeof(uint32_t), 1, w) != 1)
 		return false;
 
-	if(fwrite(&NumChannels, sizeof(uint16_t), 1, w) != 1)
+	if(fwrite(&audio_format, sizeof(uint16_t), 1, w) != 1)
 		return false;
 
-	//SampleRate
-
-	//ByteRate
-
-	if(fwrite(&BlockAlign, sizeof(uint16_t), 1, w) != 1)
+	if(fwrite(&num_channels, sizeof(uint16_t), 1, w) != 1)
 		return false;
 
-	if(fwrite(&BitsPerSample, sizeof(uint16_t), 1, w) != 1)
+	if(fwrite(&sample_rate, sizeof(uint32_t), 1, w) != 1)
 		return false;
 
-	if(fwrite(SubChunk2ID, sizeof(char), 4, w) != 4)
+	if(fwrite(&byte_rate, sizeof(uint32_t), 1, w) != 1)
 		return false;
 
-	//SubChunk2Size
+	if(fwrite(&block_align, sizeof(uint16_t), 1, w) != 1)
+		return false;
 
-	//Data
+	if(fwrite(&bits_per_sample, sizeof(uint16_t), 1, w) != 1)
+		return false;
+
+	if(fwrite(sub_chunk2_id, sizeof(char), 4, w) != 4)
+		return false;
+
+	if(fwrite(&sub_chunk2_size, sizeof(uint32_t), 1, w) != 1)
+		return false;
+
+	if(fwrite(data, sizeof(int16_t), n, w) != n)
+		return false;
 	
 	return true;
 }

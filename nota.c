@@ -15,17 +15,51 @@ enum {EVNOTA_NOTA, EVNOTA_VELOCIDAD};
 enum {METAEVENTO_TIPO, METAEVENTO_LONGITUD};
 
 
+
 note_t *crear_note_t(void){
     note_t *note = malloc(sizeof(note_t) * 20); //Primeras 20 notas.
     if(note == NULL){
         fprintf(stderr, "Fallo malloc note\n");
         return NULL;
     }
+
     return note;
 }
 
-bool leer_notas(FILE *f, note_t *note, size_t *cant_notas, int pps) {
+nota_contenedor_t *crear_nota_contenedor_t(FILE *f){
+    nota_contenedor_t *contenedor = malloc(sizeof(nota_contenedor_t));
+    if(t == NULL)
+        return NULL;
 
+    contenedor->notes = crear_note_t();
+    if(t->notes == NULL){
+        free(t);
+        return NULL;
+    }
+
+    if(! leer_notas(f, contenedor->notes, contenedor->cant_notas)){
+        destruir_nota_contenedor_t(contenedor->notes);
+        return NULL;
+    }
+
+    return contenedor;
+}
+
+
+void destruir_note_t(note_t *note){
+    free(note);
+}
+
+void destruir_nota_contenedor_t(nota_contenedor_t *contenedor){
+    destruir_note_t(contenedor->notes);
+    free(contenedor);
+}
+
+
+
+//FIJARSE SI contenedor.notes[encendida].t0 = ... ESTA BIEN ESCRITO.
+
+bool leer_notas(FILE *f, nota_contenedor_t *contenedor, int pps){
     // LECTURA DEL ENCABEZADO:
     formato_t formato;
     uint16_t numero_pistas;
@@ -86,17 +120,17 @@ bool leer_notas(FILE *f, note_t *note, size_t *cant_notas, int pps) {
                     return false;
                 }
 
-                //GUARDADO DE DATOS DE NOTE:
+                //GUARDADO DE DATOS EN CONTENEDOR DE NOTES:
                 if(evento == NOTA_ENCENDIDA && buffer[EVNOTA_VELOCIDAD] != 0){
-                	note[encendida].intensidad = buffer[EVNOTA_VELOCIDAD];
-                	note[encendida].t0 = tiempo;
-                	note[encendida].octava = octava;
-                	note[encendida].nota = codificar_nota(nota);
+                	contenedor.note[encendida].intensidad = buffer[EVNOTA_VELOCIDAD];
+                	contenedor.note[encendida].t0 = tiempo;
+                	contenedor.note[encendida].octava = octava;
+                	contenedor.note[encendida].nota = codificar_nota(nota);
                 	encendida++;
                 }
 
-                if((evento == NOTA_ENCENDIDA && buffer[EVNOTA_VELOCIDAD] == 0) || evento == NOTA_APAGADA){
-                	note[apagada].duracion = tiempo - note[apagada].t0;
+                else if((evento == NOTA_ENCENDIDA && buffer[EVNOTA_VELOCIDAD] == 0) || evento == NOTA_APAGADA){
+                	contenedor.note[apagada].duracion = tiempo - contenedor.note[apagada].t0;
                 	apagada++;
                 }
 
@@ -114,32 +148,18 @@ bool leer_notas(FILE *f, note_t *note, size_t *cant_notas, int pps) {
         }
     }
 
-    *cant_notas = encendida;
+    contenedor.cant_notas = encendida;
 
     return true;
 }
 
-void destruir_note_t(note_t *note){
-    free(note);
-}
 
-nota_contenedor_t *crear_nota_contenedor_t(size_t cant_notas, note_t *note){
-    nota_contenedor_t *t = malloc(sizeof(nota_contenedor_t));
-    if(t == NULL)
-        return NULL;
+float leer_frecuencia_nota(note_t *nota){
+    int i;
 
-    t->notes = malloc(sizeof(note_t) * cant_notas);
-    if(t->note == NULL){
-        free(t);
-        return NULL;
-    }
+    for(i = 0; i < 12; i++)
+        if(! strcmp(nota->nota, notas[i]))
+            break;
 
-    t->notes = note;
-
-    t->cant_notas = cant_notas;
-}
-
-void destruir_nota_contenedor_t(nota_contenedor_t *t){
-    free(t->notes);
-    free(t);
+    return 440 * (pow((1.0) / 2, 4 - nota->octava)) * (pow(2, (i - 9) / 12));
 }

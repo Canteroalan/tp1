@@ -7,9 +7,19 @@
 
 
 #include "SINTETIZADOR.H"
+#include "FUNCIONES.H"
+#include "TRAMO.H"
 
 
 #define MAX 256
+
+struct _synt {
+	float *frecuencia;
+	float *intensidad;
+	size_t cantidad_armonicos;
+	char *func_mod[3];
+	float parametros[3][3];
+};
 
 
 synt_t *crear_synt_t(FILE *s){
@@ -42,6 +52,13 @@ synt_t *crear_synt_t(FILE *s){
 	for(size_t i = 0; i < 3; i++)
 		for(size_t j = 0; j < 3; j++)
 			synt->parametros[i][j] = 0;
+
+	if(! leer_sintetizador(s, synt)){
+		destruir_synt_t(synt_t);
+		free(q);
+		return NULL;
+	}
+
 
 	free(q);
 
@@ -90,7 +107,7 @@ void destruir_lineas(char **lineas, size_t n){
     free(lineas);
 }
 
-//bool leer_sintetizador(FILE *s, int n, int *f, float *a, char *func_mod[3], float parametros[3][3]){
+
 bool leer_sintetizador(FILE *s, synt_t *synt){
 	
 	char *q = malloc(sizeof(char) * MAX);
@@ -179,7 +196,7 @@ bool leer_func_mod(char *s, char *func_mod, float parametros[3]){
     return true;
 }
 
-void imprimir_synt_t(synt_t *synt){
+/*void imprimir_synt_t(synt_t *synt){
 
 	printf("%ld\n", synt->cantidad_armonicos);
 
@@ -194,4 +211,37 @@ void imprimir_synt_t(synt_t *synt){
 
 		printf("\n");
 	}
+}*/
+
+float **generar_matriz_armonicos(synt_t *synt){
+
+	float **armonicos = malloc(2 * sizeof(float *));
+	if(armonicos == NULL)
+		return NULL;
+
+	for(size_t i = 0; i < 2; i++){
+
+		float *almacenador = malloc(synt->cantidad_armonicos * sizeof(float));
+		if(almacenador == NULL){
+			free(armonicos);
+			return NULL;
+		}
+
+		armonicos[i] = almacenador;
+	}
+
+	for(size_t j = 0; j < synt->cant_armonicos; j++){
+		armonicos [j][0] = synt->frecuencia[j];
+		armonicos [j][1] = synt->intensidad[j];
+	}
+
+	return armonicos;
 }
+
+void destruir_matriz(float **r, size_t cantidad_de_columnas){
+	for(size_t i = 0; i < cantidad_de_columnas; i++)
+		free(r[i]);
+	
+	free(r);
+}
+

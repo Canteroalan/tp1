@@ -123,7 +123,7 @@ bool tramo_extender(tramo_t *destino, const tramo_t *extension){
     double tf_exts = (extension->t0) + (double)(extension->n) / (extension->f_m);
 
     if(tf_dest < tf_exts)
-        if(! tramo_redimensionar(destino,tf_exts))
+        if(! tramo_redimensionar(destino, tf_exts))
         	return false;
 
     for(size_t i = 0; i < (destino->n); i++)

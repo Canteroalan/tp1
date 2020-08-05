@@ -99,9 +99,14 @@ float modulacion_tri(double t, float params[3]) {
 }
 
 float modulacion_pulsos(double t, float params[3]) {
+	float p = ((t / params[0]) - floor(t / params[0])) * params[0];
+	float r = fabs(((1 - params[2]) / params[1]) * (p - params[0] + params[1])) + params[2];
+	
+	if(r < 1)
+		return r;
+    
     return 1;
 }
-
 
 
 const float modula_funcion(char *s, float parametros[3], double tiempo){

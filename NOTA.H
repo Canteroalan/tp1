@@ -27,22 +27,21 @@ typedef enum {
 typedef enum { DO, REb, RE, MIb, MI, FA, SOLb, SOL, LAb, LA, SIb, SI }nota_t;
 
 
-
-typedef struct {
+typedef struct _note {
     float  intensidad;
     double t0;
     uint32_t duracion;
     unsigned char octava;
     const char *nota;
-} note_t;
+}note_t;
 
-typedef struct {
-	size_t cant_notas;
-	note_t *notes;
+typedef struct _contenedor{
+    size_t cant_notas;
+    note_t *notes;
 }nota_contenedor_t;
 
 
-
+//ej4
 bool decodificar_formato(uint16_t valor, formato_t *formato);
 bool decodificar_evento(uint8_t valor, evento_t *evento, char *canal, int *longitud);
 bool decodificar_nota(uint8_t valor, nota_t *nota, signed char *octava);
@@ -52,7 +51,7 @@ const char *codificar_evento(evento_t evento);
 const char *codificar_nota(nota_t nota);
 
 
-
+//ej5
 uint8_t leer_uint8_t(FILE *f);
 uint16_t leer_uint16_big_endian(FILE *f);
 uint32_t leer_uint32_big_endian(FILE *f);
@@ -63,13 +62,13 @@ bool leer_evento(FILE *f, evento_t *evento, char *canal, int *longitud, uint8_t 
 void descartar_metaevento(FILE *f, uint8_t tamagno);
 
 
-
+//nota.c
 note_t *crear_note_t(void);
-bool leer_notas(FILE *f, note_t *note, size_t *cant_notas, int pps);
+nota_contenedor_t *crear_nota_contenedor_t(FILE *f);
 void destruir_note_t(note_t *note);
-
-
-nota_contenedor_t *crear_nota_contenedor_t(size_t cant_notas, note_t *note);
 void destruir_nota_contenedor_t(nota_contenedor_t *t);
+bool leer_notas(FILE *f, nota_contenedor_t *contenedor, int pps);
+float leer_frecuencia_nota(note_t *nota);
+
 
 #endif

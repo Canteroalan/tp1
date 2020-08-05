@@ -4,12 +4,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-typedef struct {
-    float *v;
-    size_t n;
-    double t0;
-    int f_m;
-} tramo_t;
+typedef struct _tramo tramo_t;
 
 
 //ej3.c
@@ -26,12 +21,12 @@ bool tramo_extender(tramo_t *destino, const tramo_t *extension);
 
 
 //tramo.c
-float leer_frecuencia_tramo(note_t *nota);
 double calcular_tf(note_t *nota, float td);
-float **generar_matriz_armonicos(synt_t synt);
-void destruir_matriz(float **r, size_t cantidad_de_columnas);
-tramo_t *modulacion(tramo_t *t, synt_t *synt);
-tramo_t *sintetizar_cancion(note_t v[],size_t tamagno,synt_t * w ,int fre_mtro);
+void determina_max_and_min(float *max, float *min, float v);
+tramo_t  *modulacion(tramo_t *t, size_t cant_armonicos, float parametros[3], char *func_mod[3], float *h, float *l);
+tramo_t *sintetizar_cancion(FILE *f, synt_t *s, int f_m);
+float crea_factor_escala(float maximo,float minimo);
+int16_t * crea_muestras(tramo_t * t,float v);
 
 
-#endif // TRAMO_H
+#endif
