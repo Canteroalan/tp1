@@ -72,7 +72,6 @@ tramo_t  * modulacion(tramo_t *t, synt_t *p,){
         return t;
 }
 
-
 tramo_t *sintetizar_cancion(note_t v[],size_t tamagno,synt_t * w ,int fre_mtro){
 	float ** t=genera_matriz_armonicos(w);
 	for(size_t i=0;i<tamagno;i++){
