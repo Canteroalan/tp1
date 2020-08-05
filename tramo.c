@@ -12,7 +12,7 @@
 
 
 
-float leer_frecuencia_tramo(note_t *nota){ //transfoma la nota del note_t en su numero posicional(nota_t). 
+float leer_frecuencia_tramo(note_t *nota){
 	int i;
 
 	for(i = 0; i < 12; i++)
@@ -22,11 +22,11 @@ float leer_frecuencia_tramo(note_t *nota){ //transfoma la nota del note_t en su 
 	return 440 * (pow((1.0) / 2, 4 - nota->octava)) * (pow(2, (i - 9) / 12));
 }
 
-double calcular_tf(note_t *nota, float td){  //genera el tiempo final para usar en tramo_muestreo.
+double calcular_tf(note_t *nota, float td){ 
 	return nota->t0 + nota->duracion + td;
 }
 
-float **generar_matriz_armonicos(synt_t synt){      // carga los datos recibidos de los vectores multiplicador,intensidad en una matriz.
+float **generar_matriz_armonicos(synt_t synt){
 
 	float **armonicos = malloc(2 * sizeof(float *));
 	if(armonicos == NULL)
@@ -51,52 +51,36 @@ float **generar_matriz_armonicos(synt_t synt){      // carga los datos recibidos
 	return armonicos;
 }
 
-
-void destruir_matriz(float **r, size_t cantidad_de_columnas){ //si bien siempre vamos a tener dos columnas en la matriz por las dudas puse la cantidad de columnas.
+void destruir_matriz(float **r, size_t cantidad_de_columnas){
 	for(size_t i = 0; i < cantidad_de_columnas; i++)
 		free(r[i]);
 	
 	free(r);
 }
 
-
-
-//prototipo para funcion m(t) de modulacion (usamos la relacion que hay entre (i en el for) y el tiempo puede ser que no este bien el n_de_sostenido 
-
-tramo_t *modulacion(tramo_t *t, synt_t *synt){
-    size_t n_ataque = t->f_m * synt->parametros[0][0]     //aca estas calulando hasta que n se aplica la funcion de ataque 
-    size_t n_sostenido = t->f_m * synt->parametros[0][1] + n_ataque//calculas hasta que n se aplica el sostenido
-
-    funcion_t func[3];
-
-    for(size_t i = 0; i < t->n; i++){
+tramo_t  * modulacion(tramo_t *t, synt_t *p,){
+       	size_t n_ataque = t->f_m * p->parametros[0][0];
+       	size_t n_sostenido = t->f_m * p->parametros[0][1] + n_ataque;
+	for(size_t i = 0; i < t->n; i++){
+		double tiempo=t->t0 +(double)i/t->f_m;
 		if(i < n_ataque)
-    		t->v[i] = t->v[i] * codificar_funcion(func[0]); // la funcion correspondiente de modulacion de ataque
-
-	    else if(i < n_sostenido)
-	        t->v[i] = t->v[i] * codificar_funcion(func[1]);// la funcion correspondiente de modulacion
-
-        t->v[i] = t->v[i] * codificar_funcion(func[2]); // la funcion de decaimiento
-   }
-
-   return t;
+			t->v[i] = t->v[i] * modula_funcion(p->func_mod[0],p->parametros[0],tiempo);
+	        if(i>n_ataque && i < n_sostenido)
+			t->v[i] = t->v[i] * modula_funcion(p->func_mod[1],p->parametros[1],tiempo);
+                t->v[i] = t->v[i] * modula_funcion(p->func_mod[2],p->parametros[2],tiempo);
+	}
+        return t;
 }
 
 
 tramo_t *sintetizar_cancion(note_t v[],size_t tamagno,synt_t * w ,int fre_mtro){
-	float ** t=genera_matriz(synt_t->frecuencia,syn_t->intensidad,sint_t->cantidad_armonicos);
+	float ** t=genera_matriz_armonicos(w);
 	for(size_t i=0;i<tamagno;i++){
-		float p=_leer_frecuencia(v[i]->octava,v[i]->nota);
-		double tf=_calcula_tf(v[i]->t0,v[i]->duracion,w->parametros[0][3]);//params [0][3] <- creo que esa es la posicion donde se encuntra tiempo de decaimiento
+		float p=leer_frecuencia_tramo(v[i]);
+		double tf=_calcula_tf(v[i]->t0,v[i]->duracion,w->parametros[0][3]);
 		tramo_t * muestrea_nota=tramo_crear_muestreo(v[i]->t0,tf,fre_mtro,p,v[i]->intensidad,t,w->cantidad_armonicos);
-		/*aca iria la funcion que modulariza el tramo_t no estaria viendo como aplicarla , mi idea es hacer un puntero a funciones ya que la funcion de modularizacion 
-		 * tiene que usar las funciones que definimos en funciones_modulacion.c . la implementacion (creo) seria recorrer el tramito generado y comparando el tiempo 
-		 * por lo tanto habbria que hacer algo asi (lee el prototipo de la funcion );
-		 
+		tramo_t * muestra_modulada=(muestrea_nota,w);
 
-
-		//despues de lo anterior hay que pasarle el tramo modularizado a tramo_extender 
-		*/
 	}
 	destruir_matriz(t);
 	return el tramo con todas las notas sumadas!;
