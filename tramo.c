@@ -57,27 +57,40 @@ void destruir_matriz(float **r, size_t cantidad_de_columnas){
 	
 	free(r);
 }
+void determina_max_and_min(float max,float min,float v){ // funcion que determina maximo y minimo. 
+	if(v>max)
+		max=v;
+	if(v<min)
+		min=v;
+}
 
-tramo_t  *modulacion(tramo_t *t, synt_t *p){
+tramo_t  *modulacion(tramo_t *t, synt_t *p,float max,float min){
    	size_t n_ataque = t->f_m * p->parametros[0][0];
    	size_t n_sostenido = t->f_m * p->parametros[0][1] + n_ataque;
-
+	float max=0;
+	float min=0;
 	for(size_t i = 0; i < t->n; i++){
 		double tiempo = t->t0 + (double) i / t->f_m;
 
-		if(i < n_ataque)
+		if(i < n_ataque){
 			t->v[i] = t->v[i] * modula_funcion(p->func_mod[0], p->parametros[0], tiempo);
+			determina_max_and_min(max,min,t->v[i]);
+		}
 
-        if(i > n_ataque && i < n_sostenido)
+                if(i > n_ataque && i < n_sostenido){
 			t->v[i] = t->v[i] * modula_funcion(p->func_mod[1], p->parametros[1], tiempo);
-
-        t->v[i] = t->v[i] * modula_funcion(p->func_mod[2], p->parametros[2], tiempo);
+			determina_max_and_min(max,min,t->v[i]);
+		}
+                t->v[i] = t->v[i] * modula_funcion(p->func_mod[2], p->parametros[2], tiempo);
+		determina_max_and_min(max,min,t->v[i]);
 	}
 
     return t;
 }
 
 tramo_t *sintetizar_cancion(note_t v[], size_t tamagno, synt_t * w , int f_m){
+	float grand_max=0; //aca se va  a guardar el valor mas grande de los maximos 
+	float grand_min=0; //aca se va  a guardar el valor mas chico de los minimos
 	float **t = genera_matriz_armonicos(w);
 	if(t == NULL)
 		return NULL;
@@ -85,6 +98,19 @@ tramo_t *sintetizar_cancion(note_t v[], size_t tamagno, synt_t * w , int f_m){
 	tramo_t *destino = _tramo_crear(0, 0, f_m)
 	if(destino == NULL){
 		destruir_matriz(t);
+		return NULL;
+	}
+	float * maximos=malloc(tamagno*sizeof(float)); // esto va almacenar los diferentes maximos de los tramos 
+	if(maximos == NULL){
+		destruir_matriz(t);
+		tramo_destruir(destino);
+		return NULL;
+	}
+	float * minimos=malloc(tamagno*sizeof(float)); // esto va almacenar los diferentes minimos de los tramos 
+	if(minimos == NULL){
+		destruir_matriz(t);
+		tramo_destruir(t);
+		free(maximos);
 		return NULL;
 	}
 
@@ -98,7 +124,12 @@ tramo_t *sintetizar_cancion(note_t v[], size_t tamagno, synt_t * w , int f_m){
 			return NULL;
 		}
 
-		tramo_t *muestra_modulada = modulacion(muestrea_nota, w);
+		tramo_t *muestra_modulada = modulacion(muestrea_nota, w,maximos[i],minimos[i]);
+		if(maximos[i]>grand_max)                                              
+			grand_max=maximos[i];
+		if(minimos[i]<grand_min)
+			grand_min=minimos[i];
+
 
 		if(! tramo_extender(destino, muestra_modulada))
 			return NULL;
@@ -109,16 +140,6 @@ tramo_t *sintetizar_cancion(note_t v[], size_t tamagno, synt_t * w , int f_m){
 	return destino;
 }
 
-tramo_t *tramo_escalar(tramo *t){
-	float max = 0, min = 0;
 
-	for(size_t i = 0; i < t->n; i++){
-		if(t->v[i] > max)
-			max = t->v[i];
-
-		else if(t->v[i] < min)
-			min = t->v[i];
-	}
-}
 
 
