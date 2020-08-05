@@ -8,20 +8,20 @@
 
 
 typedef enum {
-        PISTA_UNICA,
-        MULTIPISTAS_SINCRONICAS,
-        MULTIPISTAS_ASINCRONICAS
+    PISTA_UNICA,
+	MULTIPISTAS_SINCRONICAS,
+    MULTIPISTAS_ASINCRONICAS
 }formato_t;
 
 typedef enum {
-        NOTA_APAGADA,
-        NOTA_ENCENDIDA,
-        NOTA_DURANTE,
-        CAMBIO_CONTROL,
-        CAMBIO_PROGORAMA,
-        VARIAR_CANAL,
-        CABIO_PITCH,
-        METAEVENTO
+    NOTA_APAGADA,
+    NOTA_ENCENDIDA,
+    NOTA_DURANTE,
+    CAMBIO_CONTROL,
+    CAMBIO_PROGORAMA,
+    VARIAR_CANAL,
+    CABIO_PITCH,
+    METAEVENTO
 }evento_t;
 
 typedef enum { DO, REb, RE, MIb, MI, FA, SOLb, SOL, LAb, LA, SIb, SI }nota_t;
@@ -29,12 +29,17 @@ typedef enum { DO, REb, RE, MIb, MI, FA, SOLb, SOL, LAb, LA, SIb, SI }nota_t;
 
 
 typedef struct {
-        float  intensidad;
-        double t0;
-        uint32_t duracion;
-        unsigned char octava;
-        const char *nota;
-} note_t ;
+    float  intensidad;
+    double t0;
+    uint32_t duracion;
+    unsigned char octava;
+    const char *nota;
+} note_t;
+
+typedef struct {
+	size_t cant_notas;
+	note_t *notes;
+}nota_contenedor_t;
 
 
 
@@ -62,5 +67,9 @@ void descartar_metaevento(FILE *f, uint8_t tamagno);
 note_t *crear_note_t(void);
 bool leer_notas(FILE *f, note_t *note, size_t *cant_notas, int pps);
 void destruir_note_t(note_t *note);
+
+
+nota_contenedor_t *crear_nota_contenedor_t(size_t cant_notas, note_t *note);
+void destruir_nota_contenedor_t(nota_contenedor_t *t);
 
 #endif

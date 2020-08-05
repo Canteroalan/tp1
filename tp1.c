@@ -63,16 +63,20 @@ int main(int argc, char *argv[]){
 		fclose(w);
 		return 1;
 	}
-	//Se imprime por pantalla note dentro de leer_notas en nota.c.
+
+	crear_nota_t *contenedor = crear_nota_contenedro_t(cant_notas, note);
+	if(contenedor == NULL){
+		destruir_note_t(note);
+		fclose(s);
+		fclose(m);
+		fclose(w);
+		return 1;
+	}
 
 
 	synt_t *synt = crear_synt_t(s);
 	if(synt == NULL){
-		fclose(s);
-		return 1;
-	}
-
-	if(! leer_sintetizador(s, synt)){
+		destruir_nota_contenedor_t(contenedor);
 		destruir_synt_t(synt);
 		destruir_note_t(note);
 		fclose(s);
@@ -81,19 +85,21 @@ int main(int argc, char *argv[]){
 		return 1;
 	}
 
-	imprimir_synt_t(synt);
+	if(! leer_sintetizador(s, synt)){
+		destruir_nota_contenedor_t(contenedor);
+		destruir_synt_t(synt);
+		destruir_note_t(note);
+		fclose(s);
+		fclose(m);
+		fclose(w);
+		return 1;
+	}
+
+	//imprimir_synt_t(synt);
 
 
-	// Se tiene que generar el muestreo del tramo f(t):
-	// Frecuencia e intensidad de cada nota, armonicos de la matriz generada con generar_matriz_armonicos.
 
-	// Luego se lo multiplica por las funciones de modulacion en los distintos tiempos m(t):
-	// Llamar a una funcion modulacion() que reciba como parametros las 3 funciones de modulacion y sus parametros.
-
-	// Para finalizar muliplicar f(t) con m(t) en sus intervalos correspondientes.
-
-
-
+	destruir_nota_contenedor_t(contenedor);
 	destruir_note_t(note);
 	destruir_synt_t(synt);
 	fclose(s);

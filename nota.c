@@ -122,3 +122,24 @@ bool leer_notas(FILE *f, note_t *note, size_t *cant_notas, int pps) {
 void destruir_note_t(note_t *note){
     free(note);
 }
+
+nota_contenedor_t *crear_nota_contenedor_t(size_t cant_notas, note_t *note){
+    nota_contenedor_t *t = malloc(sizeof(nota_contenedor_t));
+    if(t == NULL)
+        return NULL;
+
+    t->notes = malloc(sizeof(note_t) * cant_notas);
+    if(t->note == NULL){
+        free(t);
+        return NULL;
+    }
+
+    t->notes = note;
+
+    t->cant_notas = cant_notas;
+}
+
+void destruir_nota_contenedor_t(nota_contenedor_t *t){
+    free(t->notes);
+    free(t);
+}

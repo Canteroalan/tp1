@@ -83,6 +83,10 @@ tramo_t *sintetizar_cancion(note_t v[], size_t tamagno, synt_t * w , int f_m){
 		return NULL;
 
 	tramo_t *destino = _tramo_crear(0, 0, f_m)
+	if(destino == NULL){
+		destruir_matriz(t);
+		return NULL;
+	}
 
 	for(size_t i = 0; i < tamagno; i++){
 		float p = leer_frecuencia_tramo(v[i]);
@@ -105,7 +109,16 @@ tramo_t *sintetizar_cancion(note_t v[], size_t tamagno, synt_t * w , int f_m){
 	return destino;
 }
 
-// me quedo por pensar como escalar el tramo para pasarselo al wave , espero que se entienda todo lo anterior 
+tramo_t *tramo_escalar(tramo *t){
+	float max = 0, min = 0;
 
+	for(size_t i = 0; i < t->n; i++){
+		if(t->v[i] > max)
+			max = t->v[i];
+
+		else if(t->v[i] < min)
+			min = t->v[i];
+	}
+}
 
 
