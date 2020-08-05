@@ -8,7 +8,6 @@
 
 
 #include "ARGUMENTOS.H"
-#include "SINTETIZADOR.H"
 #include "TRAMO.H"
 
 //$ ./sintetizador -s <sintetizador.txt> -i <entrada.mid> -o <salida.wav> [-c <canal>] [-f <frecuencia>] [-r <pulsosporsegundo>]
@@ -46,18 +45,17 @@ int main(int argc, char *argv[]){
 	int pps = leer_pulso(argc, argv);
 
 
-
-	
-
-
-	synt_t *synt = crear_synt_t(s);
-	if(synt == NULL){
-		destruir_nota_contenedor_t(contenedor);
+	tramo_t * tramo = sintetizar_cancion(m, s, f_m);
+	if(tramo == NULL){
 		fclose(s);
 		fclose(m);
 		fclose(w);
 		return 1;
 	}
+	
+
+
+	
 
 
 	//imprimir_synt_t(synt);
@@ -66,8 +64,7 @@ int main(int argc, char *argv[]){
 
 
 	if(! escribir_wave(w, n, f_m, int16_t *v)){
-		destruir_nota_contenedor_t(contenedor);
-		destruir_synt_t(synt);
+		tramo_destruir(tramo);
 		fclose(s);
 		fclose(m);
 		fclose(w);
@@ -77,8 +74,7 @@ int main(int argc, char *argv[]){
 
 
 
-	destruir_nota_contenedor_t(contenedor);
-	destruir_synt_t(synt);
+
 	fclose(s);
 	fclose(m);
 	fclose(w);

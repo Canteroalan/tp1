@@ -7,20 +7,9 @@
 
 
 #include "SINTETIZADOR.H"
-#include "FUNCIONES.H"
-#include "TRAMO.H"
 
 
 #define MAX 256
-
-struct _synt {
-	float *frecuencia;
-	float *intensidad;
-	size_t cantidad_armonicos;
-	char *func_mod[3];
-	float parametros[3][3];
-};
-
 
 synt_t *crear_synt_t(FILE *s){
 

@@ -21,12 +21,11 @@ bool tramo_extender(tramo_t *destino, const tramo_t *extension);
 
 
 //tramo.c
-double calcular_tf(note_t *nota, float td);
-void determina_max_and_min(float *max, float *min, float v);
-tramo_t  *modulacion(tramo_t *t, size_t cant_armonicos, float parametros[3], char *func_mod[3], float *h, float *l);
-tramo_t *sintetizar_cancion(FILE *f, synt_t *s, int f_m);
-float crea_factor_escala(float maximo,float minimo);
-int16_t * crea_muestras(tramo_t * t,float v);
-
+double calcular_tf(note_t *nota, synt_t *s)
+void determina_max_and_min(float *max, float *min, float v)
+tramo_t *modulacion(tramo_t *t, synt_t s, float *h, float *l)
+tramo_t *sintetizar_cancion(FILE *midi, FILE *sintetizador, int f_m)
+float crea_factor_escala(float maximo, float minimo)
+int16_t *crea_muestras(tramo_t *t, float v)
 
 #endif

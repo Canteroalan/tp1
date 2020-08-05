@@ -57,8 +57,6 @@ void destruir_nota_contenedor_t(nota_contenedor_t *contenedor){
 
 
 
-//FIJARSE SI contenedor.notes[encendida].t0 = ... ESTA BIEN ESCRITO.
-
 bool leer_notas(FILE *f, nota_contenedor_t *contenedor, int pps){
     // LECTURA DEL ENCABEZADO:
     formato_t formato;
