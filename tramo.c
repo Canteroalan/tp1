@@ -82,9 +82,11 @@ tramo_t *sintetizar_cancion(note_t v[], size_t tamagno, synt_t * w , int f_m){
 	if(t == NULL)
 		return NULL;
 
+	tramo_t *destino = _tramo_crear(0, 0, f_m)
+
 	for(size_t i = 0; i < tamagno; i++){
 		float p = leer_frecuencia_tramo(v[i]);
-		double tf = calcular_tf(v[i]->t0, v[i]->duracion,w->parametros[0][3]);
+		double tf = calcular_tf(v[i]->t0, v[i]->duracion, w->parametros[0][3]);
 
 		tramo_t *muestrea_nota = tramo_crear_muestreo(v[i]->t0, tf, f_m, p,v[i]->intensidad, t, w->cantidad_armonicos);
 		if(muestrea_nota == NULL){
@@ -92,12 +94,15 @@ tramo_t *sintetizar_cancion(note_t v[], size_t tamagno, synt_t * w , int f_m){
 			return NULL;
 		}
 
-		tramo_t *muestra_modulada = (muestrea_nota,cw);
+		tramo_t *muestra_modulada = modulacion(muestrea_nota, w);
+
+		if(! tramo_extender(destino, muestra_modulada))
+			return NULL;
 	}
 
 	destruir_matriz(t);
-	
-	return el tramo con todas las notas sumadas!;
+
+	return destino;
 }
 
 // me quedo por pensar como escalar el tramo para pasarselo al wave , espero que se entienda todo lo anterior 
