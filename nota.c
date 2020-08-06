@@ -70,7 +70,7 @@ bool leer_notas(FILE *f, nota_contenedor_t *contenedor, char channel, int pps){
         return false;
     }
 
-    printf("Encabezado:\n\tFormato: %s\n\tNumero de pistas: %d\n\tPulsos por negra: %d\n", codificar_formato(formato), numero_pistas, pulsos_negra);
+   // printf("Encabezado:\n\tFormato: %s\n\tNumero de pistas: %d\n\tPulsos por negra: %d\n", codificar_formato(formato), numero_pistas, pulsos_negra);
 
     size_t encendida = 0; //Cuenta la cantidad de note_t encendidas.
     size_t apagada = 0;	//Cuenta la cantidad de note_t apagadas.
@@ -86,7 +86,7 @@ bool leer_notas(FILE *f, nota_contenedor_t *contenedor, char channel, int pps){
             return false;
         }
 
-        printf("Pista %d:\n\tTama~no: %d\n", pista, tamagno_pista);
+      //  printf("Pista %d:\n\tTama~no: %d\n", pista, tamagno_pista);
 
         evento_t evento;
         char canal;
@@ -98,7 +98,7 @@ bool leer_notas(FILE *f, nota_contenedor_t *contenedor, char channel, int pps){
             double delta_tiempo;
             leer_tiempo(f, &delta_tiempo, pps);
             tiempo += delta_tiempo;
-            printf("[%f] ", tiempo);
+           // printf("[%f] ", tiempo);
 
             // LECTURA DEL EVENTO:
             uint8_t buffer[EVENTO_MAX_LONG];
@@ -107,7 +107,7 @@ bool leer_notas(FILE *f, nota_contenedor_t *contenedor, char channel, int pps){
                 return false;
             }
 
-            printf("Evento: %s, Canal: %d", codificar_evento(evento), canal);
+           // printf("Evento: %s, Canal: %d", codificar_evento(evento), canal);
 
             // PROCESAMOS EL EVENTO:
             if(evento == METAEVENTO && canal == 0xF) {
@@ -129,16 +129,26 @@ bool leer_notas(FILE *f, nota_contenedor_t *contenedor, char channel, int pps){
                     return false;
                 }
 
-                printf(", Nota: %s, Octava: %d, Velocidad: %d", codificar_nota(nota), octava, buffer[EVNOTA_VELOCIDAD]);
+               // printf(", Nota: %s, Octava: %d, Velocidad: %d", codificar_nota(nota), octava, buffer[EVNOTA_VELOCIDAD]);
 
                 //GUARDADO DE DATOS EN CONTENEDOR DE NOTES DE 1 CANAL:
                 if(channel == canal){
+	                if(encendida == mem){
+				mem*=2;
+                            note_t *aux = realloc(contenedor->notes, sizeof(note_t) * 100);
+                        if(aux == NULL){
+                            destruir_nota_contenedor_t(contenedor);
+                                return false;
+                            }
+
                     if(evento == NOTA_ENCENDIDA && buffer[EVNOTA_VELOCIDAD] != 0){
+			    printf("%ld\n",encendida);
                 	   contenedor->notes[encendida].intensidad = buffer[EVNOTA_VELOCIDAD];
                 	   contenedor->notes[encendida].t0 = tiempo;
                 	   contenedor->notes[encendida].octava = octava;
                 	   contenedor->notes[encendida].nota = codificar_nota(nota);
                 	   encendida++;
+
                     }
 
                     if((evento == NOTA_ENCENDIDA && buffer[EVNOTA_VELOCIDAD] == 0) || evento == NOTA_APAGADA){
@@ -146,23 +156,12 @@ bool leer_notas(FILE *f, nota_contenedor_t *contenedor, char channel, int pps){
                 	   apagada++;
                     }
 
-                    if(encendida == (mem - 1)){
-                	    note_t *aux = realloc(contenedor->notes, sizeof(note_t) * 100);
-            	        if(aux == NULL){
-               	            destruir_nota_contenedor_t(contenedor);
-            		        return false;
-                	    }
-
                         contenedor->notes = aux;
-
-                	   mem += 100;
                     }
                 }
 
             }
 
-            putchar('\n');
-            //printf("%zd\n", mem);
         }
     }
 
