@@ -97,10 +97,10 @@ bool leer_tiempo(FILE *f, double *tiempo, int pps){
 	
 
 	for(size_t n = 0; n <= i; n++){
-		*time |= ((t[n] & MASK_TIEMPO) << (SHIFT_TIEMPO * (i - n)));
+		time |= ((t[n] & MASK_TIEMPO) << (SHIFT_TIEMPO * (i - n)));
 	}
 
-	tiempo = time / pps;
+	*tiempo = time / pps;
 
 	return true;
 }

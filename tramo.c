@@ -242,7 +242,7 @@ int16_t *sintetizar_cancion(FILE *midi, FILE *sintetizador, int f_m, size_t *can
 			return NULL;
 		}
 
-		muestrea_nota = modulacion(muestrea_nota, synt, &max, &min);
+		tramo_t *muestra_modulada = modulacion(muestrea_nota, synt, &max, &min);
 
 		if(max > grand_max)                                              
 			grand_max = max;
@@ -250,20 +250,20 @@ int16_t *sintetizar_cancion(FILE *midi, FILE *sintetizador, int f_m, size_t *can
 		if(min < grand_min)
 			grand_min = min;
 
-		if(! tramo_extender(destino, muestrea_nota)){
+		if(! tramo_extender(destino, muestra_modulada)){
 			destruir_nota_contenedor_t(contenedor);
 			destruir_synt_t(synt);
 			tramo_destruir(muestrea_nota);
 			tramo_destruir(destino);
 			return NULL;
 		}
+
+		tramo_destruir(muestrea_nota);
+		tramo_destruir(muestra_modulada);
 	}
 
 	destruir_nota_contenedor_t(contenedor);
 	destruir_synt_t(synt);
-	tramo_destruir(muestrea_nota);
-	//tramo_destruir(muestra_modulada);
-
 
 	int16_t *vect_wave = crear_muestras(destino, crear_factor_escala(grand_max,grand_min), cantidad);
 	if(vect_wave == NULL){

@@ -43,11 +43,10 @@ synt_t *crear_synt_t(FILE *s){
 			synt->parametros[i][j] = 0;
 
 	if(! leer_sintetizador(s, synt)){
-		destruir_synt_t(synt_t);
+		destruir_synt_t(synt);
 		free(q);
 		return NULL;
 	}
-
 
 	free(q);
 

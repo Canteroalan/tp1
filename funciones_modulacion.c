@@ -17,7 +17,7 @@ struct traduccion_funcion {
 	char *cadena;
 };
 
-static const traduccion_funcion funciones[] = {
+static const struct traduccion_funcion funciones[] = {
     {modulacion_constante, "CONSTANT"},
     {modulacion_linear, "LINEAR"},
     {modulacion_invlinear, "INVLINEAR"},

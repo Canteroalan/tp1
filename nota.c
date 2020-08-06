@@ -1,7 +1,9 @@
-#include<stdio.h>
-#include<stdlib.h>
-#include<stdbool.h>
-#include<stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <string.h>
+#include <math.h>
 
 
 #include "NOTA.H"
@@ -28,17 +30,17 @@ note_t *crear_note_t(void){
 
 nota_contenedor_t *crear_nota_contenedor_t(FILE *f, char canal, int pps){
     nota_contenedor_t *contenedor = malloc(sizeof(nota_contenedor_t));
-    if(t == NULL)
+    if(contenedor == NULL)
         return NULL;
 
     contenedor->notes = crear_note_t();
-    if(t->notes == NULL){
-        free(t);
+    if(contenedor->notes == NULL){
+        free(contenedor);
         return NULL;
     }
 
-    if(! leer_notas(f, contenedor->notes, contenedor->cant_notas, canal, pps)){
-        destruir_nota_contenedor_t(contenedor->notes);
+    if(! leer_notas(f, contenedor, canal, pps)){
+        destruir_nota_contenedor_t(contenedor);
         return NULL;
     }
 
@@ -71,7 +73,7 @@ bool leer_notas(FILE *f, nota_contenedor_t *contenedor, char channel, int pps){
 
     size_t encendida = 0; //Cuenta la cantidad de note_t encendidas.
     size_t apagada = 0;	//Cuenta la cantidad de note_t apagadas.
-    size_t mem = 20; //Para hacer realloc de note en 20 unidades.
+    size_t mem = 100; //Para hacer realloc de note en 100 unidades.
 
 
     // ITERAMOS LAS PISTAS:
@@ -119,28 +121,30 @@ bool leer_notas(FILE *f, nota_contenedor_t *contenedor, char channel, int pps){
                 }
 
                 //GUARDADO DE DATOS EN CONTENEDOR DE NOTES DE 1 CANAL:
-                if(channel = canal){
+                if(channel == canal){
                     if(evento == NOTA_ENCENDIDA && buffer[EVNOTA_VELOCIDAD] != 0){
-                	   contenedor.note[encendida].intensidad = buffer[EVNOTA_VELOCIDAD];
-                	   contenedor.note[encendida].t0 = tiempo;
-                	   contenedor.note[encendida].octava = octava;
-                	   contenedor.note[encendida].nota = codificar_nota(nota);
+                	   contenedor->notes[encendida].intensidad = buffer[EVNOTA_VELOCIDAD];
+                	   contenedor->notes[encendida].t0 = tiempo;
+                	   contenedor->notes[encendida].octava = octava;
+                	   contenedor->notes[encendida].nota = codificar_nota(nota);
                 	   encendida++;
                     }
 
                     else if((evento == NOTA_ENCENDIDA && buffer[EVNOTA_VELOCIDAD] == 0) || evento == NOTA_APAGADA){
-                	   contenedor.note[apagada].duracion = tiempo - contenedor.note[apagada].t0;
+                	   contenedor->notes[apagada].duracion = tiempo - contenedor->notes[apagada].t0;
                 	   apagada++;
                     }
 
                     if(encendida == mem){
-                	    note_t *aux = realloc(note, sizeof(note_t) * 20);
+                	    note_t *aux = realloc(contenedor->notes, sizeof(note_t) * 100);
             	        if(aux == NULL){
-               	            free(note);
+               	            destruir_nota_contenedor_t(contenedor);
             		        return false;
-                	}
+                	    }
 
-                	   mem += 20;
+                        contenedor->notes = aux;
+
+                	   mem += 100;
                     }
                 }
 
@@ -148,18 +152,20 @@ bool leer_notas(FILE *f, nota_contenedor_t *contenedor, char channel, int pps){
         }
     }
 
-    contenedor.cant_notas = encendida;
+    contenedor->cant_notas = encendida;
 
     return true;
 }
 
 
-float leer_frecuencia_nota(note_t nota){
+float leer_frecuencia_nota(note_t n){
     int i;
 
+    nota_t notas[12];
+
     for(i = 0; i < 12; i++)
-        if(! strcmp(nota->nota, notas[i]))
+        if(! strcmp(n.nota, codificar_nota(notas[i])))
             break;
 
-    return 440 * (pow((1.0) / 2, 4 - nota.octava)) * (pow(2, (i - 9) / 12));
+    return 440 * (pow((1.0) / 2, 4 - n.octava)) * (pow(2, (i - 9) / 12));
 }
