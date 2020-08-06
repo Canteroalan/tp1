@@ -69,8 +69,8 @@ bool decodificar_formato(uint16_t valor, formato_t *formato){
 	return true;
 }
 
-bool decodificar_evento(uint8_t valor,evento_t *evento,char *canal,int *longitud){
-        if((valor & MASK_NOTA)==0)
+bool decodificar_evento(uint8_t valor, evento_t *evento, char *canal, int *longitud){
+        if((valor & MASK_NOTA) == 0)
                 return false;
 
         *evento = (valor  & (~MASK_NOTA)) >> SHIFT_EVENTO;
@@ -87,7 +87,7 @@ bool decodificar_nota(uint8_t valor, nota_t *nota, signed char *octava){
 		return false;
 
 	*nota = valor % 12;
-	*octava = (valor / 12) -1;
+	*octava = (valor / 12) - 1;
 
 	return true;
 }

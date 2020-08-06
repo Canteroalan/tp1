@@ -47,7 +47,7 @@ int main(int argc, char *argv[]){
 
 	size_t n;
 
-	int16_t *v = sintetizar_cancion(m, s, f_m, &n);
+	int16_t *v = sintetizar_cancion(m, s, f_m, &n, canal, pps);
 	if(v == NULL){
 		fclose(s);
 		fclose(m);

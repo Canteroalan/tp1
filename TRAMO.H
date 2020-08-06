@@ -23,8 +23,8 @@ bool tramo_extender(tramo_t *destino, const tramo_t *extension);
 //tramo.c
 double calcular_tf(note_t *nota, synt_t *s);
 void determina_max_and_min(float *max, float *min, float v);
-tramo_t *modulacion(tramo_t *t, synt_t s, float *h, float *l);
-tramo_t *sintetizar_cancion(FILE *midi, FILE *sintetizador, int f_m);
+tramo_t *modulacion(tramo_t *t, synt_t *s, float *h, float *l);
+tramo_t *sintetizar_cancion(FILE *midi, FILE *sintetizador, int f_m, size_t *cantidad, char canal, int pps);
 float crear_factor_escala(float maximo, float minimo);
 int16_t *crear_muestras(tramo_t *t, float v, size_t *n);
 

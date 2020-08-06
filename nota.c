@@ -26,7 +26,7 @@ note_t *crear_note_t(void){
     return note;
 }
 
-nota_contenedor_t *crear_nota_contenedor_t(FILE *f){
+nota_contenedor_t *crear_nota_contenedor_t(FILE *f, char canal, int pps){
     nota_contenedor_t *contenedor = malloc(sizeof(nota_contenedor_t));
     if(t == NULL)
         return NULL;
@@ -37,7 +37,7 @@ nota_contenedor_t *crear_nota_contenedor_t(FILE *f){
         return NULL;
     }
 
-    if(! leer_notas(f, contenedor->notes, contenedor->cant_notas)){
+    if(! leer_notas(f, contenedor->notes, contenedor->cant_notas, canal, pps)){
         destruir_nota_contenedor_t(contenedor->notes);
         return NULL;
     }
@@ -57,7 +57,7 @@ void destruir_nota_contenedor_t(nota_contenedor_t *contenedor){
 
 
 
-bool leer_notas(FILE *f, nota_contenedor_t *contenedor, int pps){
+bool leer_notas(FILE *f, nota_contenedor_t *contenedor, char channel, int pps){
     // LECTURA DEL ENCABEZADO:
     formato_t formato;
     uint16_t numero_pistas;
@@ -118,28 +118,30 @@ bool leer_notas(FILE *f, nota_contenedor_t *contenedor, int pps){
                     return false;
                 }
 
-                //GUARDADO DE DATOS EN CONTENEDOR DE NOTES:
-                if(evento == NOTA_ENCENDIDA && buffer[EVNOTA_VELOCIDAD] != 0){
-                	contenedor.note[encendida].intensidad = buffer[EVNOTA_VELOCIDAD];
-                	contenedor.note[encendida].t0 = tiempo;
-                	contenedor.note[encendida].octava = octava;
-                	contenedor.note[encendida].nota = codificar_nota(nota);
-                	encendida++;
-                }
+                //GUARDADO DE DATOS EN CONTENEDOR DE NOTES DE 1 CANAL:
+                if(channel = canal){
+                    if(evento == NOTA_ENCENDIDA && buffer[EVNOTA_VELOCIDAD] != 0){
+                	   contenedor.note[encendida].intensidad = buffer[EVNOTA_VELOCIDAD];
+                	   contenedor.note[encendida].t0 = tiempo;
+                	   contenedor.note[encendida].octava = octava;
+                	   contenedor.note[encendida].nota = codificar_nota(nota);
+                	   encendida++;
+                    }
 
-                else if((evento == NOTA_ENCENDIDA && buffer[EVNOTA_VELOCIDAD] == 0) || evento == NOTA_APAGADA){
-                	contenedor.note[apagada].duracion = tiempo - contenedor.note[apagada].t0;
-                	apagada++;
-                }
+                    else if((evento == NOTA_ENCENDIDA && buffer[EVNOTA_VELOCIDAD] == 0) || evento == NOTA_APAGADA){
+                	   contenedor.note[apagada].duracion = tiempo - contenedor.note[apagada].t0;
+                	   apagada++;
+                    }
 
-                if(encendida == mem){
-                	note_t *aux = realloc(note, sizeof(note_t) * 20);
-                	if(aux == NULL){
-                		free(note);
-                		return false;
+                    if(encendida == mem){
+                	    note_t *aux = realloc(note, sizeof(note_t) * 20);
+            	        if(aux == NULL){
+               	            free(note);
+            		        return false;
                 	}
 
-                	mem += 20;
+                	   mem += 20;
+                    }
                 }
 
             }

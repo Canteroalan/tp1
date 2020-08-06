@@ -24,7 +24,7 @@ struct _tramo {
 
 //EJ3
 
-double onda(double t, float a, float f, float phi ){
+double onda(double t, float a, float f, float phi){
     return  a * sin(2 * PI * f * t + phi);
 }
 
@@ -163,7 +163,7 @@ void determina_max_and_min(float *max, float *min, float v){
 		*min = v;
 }
 
-tramo_t *modulacion(tramo_t *t, synt_t s, float *h, float *l){
+tramo_t *modulacion(tramo_t *t, synt_t *s, float *h, float *l){
    	size_t n_ataque = t->f_m * s->parametros[0];
    	size_t n_sostenido = t->f_m * s->parametros[1] + n_ataque;
 	float max = 0;
@@ -190,16 +190,16 @@ tramo_t *modulacion(tramo_t *t, synt_t s, float *h, float *l){
 		t->v[i] = 0;
 	}
     
-        *h = max;
+    *h = max;
 	*l = min;
     
     return t;
 }
 
 
-int16_t * sintetizar_cancion(FILE *midi, FILE *sintetizador, int f_m,size_t *cantidad){
+int16_t * sintetizar_cancion(FILE *midi, FILE *sintetizador, int f_m, size_t *cantidad, char canal, int pps){
 	
-	nota_contenedor_t *contenedor = crear_nota_contenedor_t(m);
+	nota_contenedor_t *contenedor = crear_nota_contenedor_t(m, canal, pps);
 	if(contenedor == NULL)
 		return NULL;
 
@@ -265,7 +265,7 @@ int16_t * sintetizar_cancion(FILE *midi, FILE *sintetizador, int f_m,size_t *can
 	destruir_matriz(t);
 
 
-	int16_t *vect_wave = crear_muestras(destino,crear_factor_escala(grand_max,grand_min),cantidad);
+	int16_t *vect_wave = crear_muestras(destino, crear_factor_escala(grand_max,grand_min), cantidad);
 	if(vect_wave == NULL){
 		tramo_destruir(destino);
 		return NULL;
