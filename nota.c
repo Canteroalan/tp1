@@ -19,7 +19,7 @@ enum {METAEVENTO_TIPO, METAEVENTO_LONGITUD};
 
 
 note_t *crear_note_t(void){
-    note_t *note = malloc(sizeof(note_t) * 20); //Primeras 20 notas.
+    note_t *note = malloc(sizeof(note_t) * 100); //Primeras 20 notas.
     if(note == NULL){
         fprintf(stderr, "Fallo malloc note\n");
         return NULL;

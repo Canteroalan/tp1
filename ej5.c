@@ -87,7 +87,7 @@ bool leer_pista(FILE *f, uint32_t *tamagno){
 bool leer_tiempo(FILE *f, double *tiempo, int pps){
 	uint8_t t[4];
 	size_t i = 0;
-	uint32_t time;
+	uint32_t time = 0;
 
 	while(((t[i] = leer_uint8_t(f)) & MASK_E3) == MASK_E3)
 		i++;
@@ -100,29 +100,29 @@ bool leer_tiempo(FILE *f, double *tiempo, int pps){
 		time |= ((t[n] & MASK_TIEMPO) << (SHIFT_TIEMPO * (i - n)));
 	}
 
-	*tiempo = time / pps;
+	*tiempo =(double) time / pps;
 
 	return true;
 }
 
-bool leer_evento(FILE *f, evento_t *evento, char *canal, int *longitud, uint8_t mensaje[]){	
-	uint8_t valor = leer_uint8_t(f);
-
-	if(decodificar_evento(valor, evento, canal, longitud) == false){
-		mensaje[0] = valor;
-
-		valor = leer_uint8_t(f);
-		decodificar_evento(valor, evento, canal, longitud);
-
-		for(size_t i = 1; i < *longitud; i++)
-			mensaje[i] = leer_uint8_t(f);
+bool leer_evento(FILE *f, evento_t *evento, char *canal, int *longitud, uint8_t mensaje[]){
+    uint8_t valor = leer_uint8_t(f);
+    
+    if(decodificar_evento(valor, evento, canal, longitud)){
+		
+		for(size_t i = 0; i < (*longitud); i++){
+            mensaje[i] = leer_uint8_t(f);
+		}
 
 		return true;
-	}
+    }
 
-	for(size_t i = 0; i < *longitud; i++)
-		mensaje[i] = leer_uint8_t(f);
-	
+	mensaje[0] = valor;
+
+    for(size_t i = 1; i < (*longitud); i++){
+        mensaje[i] = leer_uint8_t(f);
+    }
+
 	return true;
 }
 
