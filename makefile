@@ -14,7 +14,7 @@ tp1.o: tp1.c ARGUMENTOS.H TRAMO.H
 argumentos.o: argumentos.c ARGUMENTOS.H
 	$(CC) $(CFLAGS) $(LDFLAGS) -c argumentos.c
 
-tramo.o: tramo.c TRAMO.H NOTA.H FUNCIOES.H SINTETIZADOR.H
+tramo.o: tramo.c TRAMO.H NOTA.H FUNCIONES.H SINTETIZADOR.H
 	$(CC) $(CFLAGS) $(LDFLAGS) -c tramo.c
 
 nota.o: nota.c NOTA.H

@@ -6,12 +6,14 @@
 
 #include "TRAMO.H"
 #include "NOTA.H"
-#include "FUNCIOES.H"
+#include "FUNCIONES.H"
 #include "SINTETIZADOR.H"
 
 
 #define PI 3.141592653589793
 #define FASE 0
+#define MAX_VALOR 32767 
+#define MIN_VALOR 32768
 
 
 struct _tramo {
@@ -32,22 +34,22 @@ void inicializar_muestras(float v[], size_t n){
     for(size_t i = 0; i < n; i++)
         v[i] = 0;
 }
-
+/*
 void imprimir_muestras(const float v[], size_t n, double t0, int f_m){
-    double t;
+ 
     for(size_t i = 0; i < n;i++)
-        t = t0 + (double) i / f_m;
-}
+        double t = t0 + (double) i / f_m;
+}*/
 
 void muestrear_senoidal(float v[], size_t n, double t0, int f_m, float f, float a){
-    double t;
+
     for(int i = 0; i < n; i++){
-        t = t0 + (double) i / f_m;
+       double t = t0 + (double) i / f_m;
         v[i] += onda(t, a, f, FASE);
     }
 }
 
-void muestrear_armonicos(float v[], size_t n, double t0, int f_m, float f, float a, const float fa[][2], size_t n_fa){
+void muestrear_armonicos(float v[], size_t n, double t0, int f_m, float f, float a, float fa[][2], size_t n_fa){
     float frecuencia;
     float amplitud;
 
@@ -100,7 +102,7 @@ tramo_t *tramo_clonar(const tramo_t *t){
     return clon;
 }
 
-tramo_t *tramo_crear_muestreo(double t0, double tf, int f_m, float f, float a, const float fa[][2], size_t n_fa){
+tramo_t *tramo_crear_muestreo(double t0, double tf, int f_m, float f, float a, float fa[][2], size_t n_fa){
     tramo_t *muestreo = _tramo_crear(t0, tf, f_m);
     if(muestreo == NULL)
     	return NULL;
@@ -151,8 +153,8 @@ bool tramo_extender(tramo_t *destino, const tramo_t *extension){
 
 //TRAMO
 
-double calcular_tf(note_t *nota, synt_t *s){ 
-	return nota->t0 + nota->duracion + s->parametros[0][3];
+double calcular_tf(note_t nota, synt_t *s){ 
+	return nota.t0 + nota.duracion + s->parametros[0][3];
 }
 
 void determina_max_and_min(float *max, float *min, float v){  
@@ -164,8 +166,8 @@ void determina_max_and_min(float *max, float *min, float v){
 }
 
 tramo_t *modulacion(tramo_t *t, synt_t *s, float *h, float *l){
-   	size_t n_ataque = t->f_m * s->parametros[0];
-   	size_t n_sostenido = t->f_m * s->parametros[1] + n_ataque;
+   	size_t n_ataque = t->f_m * s->parametros[0][0];
+   	size_t n_sostenido = t->f_m * s->parametros[1][0] + n_ataque;
 	float max = 0;
 	float min = 0;
 
@@ -173,17 +175,17 @@ tramo_t *modulacion(tramo_t *t, synt_t *s, float *h, float *l){
 		double tiempo = t->t0 + (double) i / t->f_m;
 
 		if(i < n_ataque){
-			t->v[i] = t->v[i] * modula_funcion(s->func_mod[0], s->parametros[0][0], tiempo);
+			t->v[i] = t->v[i] * modula_funcion(s->func_mod[0], s->parametros[0], tiempo);
 			determina_max_and_min(&max, &min, t->v[i]);
 		}
 
         if(i > n_ataque && i < n_sostenido){
-		t->v[i] = t->v[i] * modula_funcion(s->func_mod[1], s->parametros[0][1], tiempo);
+		t->v[i] = t->v[i] * modula_funcion(s->func_mod[1], s->parametros[0], tiempo);
 		determina_max_and_min(&max,&min, t->v[i]);
 		}
 
 		if(i > n_sostenido && i < t->n){
-        	t->v[i] = t->v[i] * modula_funcion(s->func_mod[2], s->parametros[0][2], tiempo);
+        	t->v[i] = t->v[i] * modula_funcion(s->func_mod[2], s->parametros[0], tiempo);
 			determina_max_and_min(&max,&min, t->v[i]);
 		}
 
@@ -199,7 +201,7 @@ tramo_t *modulacion(tramo_t *t, synt_t *s, float *h, float *l){
 
 int16_t *sintetizar_cancion(FILE *midi, FILE *sintetizador, int f_m, size_t *cantidad, char canal, int pps){
 	
-	nota_contenedor_t *contenedor = crear_nota_contenedor_t(m, canal, pps);
+	nota_contenedor_t *contenedor = crear_nota_contenedor_t(midi, canal, pps);
 	if(contenedor == NULL)
 		return NULL;
 
@@ -213,35 +215,34 @@ int16_t *sintetizar_cancion(FILE *midi, FILE *sintetizador, int f_m, size_t *can
 	float grand_min = 0; //aca se va  a guardar el valor mas chico de los minimos
 	float max, min;
 
-	float **t = generar_matriz_armonicos(synt);
-	if(t == NULL){
-		destruir_nota_contenedor_t(contenedor);
-		destruir_synt_t(synt);
-		return NULL;
+
+	float t[synt->cantidad_armonicos][2];
+
+	for(size_t i = 0; i < synt->cantidad_armonicos; i++){
+		t[i][0] = synt->frecuencia[i];
+		t[i][1] = synt->intensidad[i];
 	}
 
-	tramo_t *destino = _tramo_crear(0, 0, f_m)
+	tramo_t *destino = _tramo_crear(0, 0, f_m);
 	if(destino == NULL){
 		destruir_nota_contenedor_t(contenedor);
 		destruir_synt_t(synt);
-		destruir_matriz(t);
 		return NULL;
 	}
 	
-	for(size_t i = 0; i < contenedor.cant_notas; i++){
-		float f = leer_frecuencia_nota(contenedor.notes[i]);
-		double tf = calcular_tf(contenedor.notes[i]->t0, contenedor.notes[i]->duracion, synt);
+	for(size_t i = 0; i < contenedor->cant_notas; i++){
+		float f = leer_frecuencia_nota(contenedor->notes[i]);
+		double tf = calcular_tf(contenedor->notes[i], synt);
 
-		tramo_t *muestrea_nota = tramo_crear_muestreo(contenedor.notes[i]->t0, tf, f_m, f, contenedor.notes[i]->intensidad, t, cant_armonicos);
+		tramo_t *muestrea_nota = tramo_crear_muestreo(contenedor->notes[i].t0, tf, f_m, f, contenedor->notes[i].intensidad, t, synt->cantidad_armonicos);
 		if(muestrea_nota == NULL){
 			destruir_nota_contenedor_t(contenedor);
 			destruir_synt_t(synt);
 			tramo_destruir(destino);
-			destruir_matriz(t);
 			return NULL;
 		}
 
-		tramo_t *muestrea_nota = modulacion(muestrea_nota, synt, &max, &min);
+		muestrea_nota = modulacion(muestrea_nota, synt, &max, &min);
 
 		if(max > grand_max)                                              
 			grand_max = max;
@@ -249,12 +250,11 @@ int16_t *sintetizar_cancion(FILE *midi, FILE *sintetizador, int f_m, size_t *can
 		if(min < grand_min)
 			grand_min = min;
 
-		if(! tramo_extender(destino, muestra_modulada)){
+		if(! tramo_extender(destino, muestrea_nota)){
 			destruir_nota_contenedor_t(contenedor);
 			destruir_synt_t(synt);
-			tramo_destruir(muestrea_nota)
+			tramo_destruir(muestrea_nota);
 			tramo_destruir(destino);
-			destruir_matriz(t);
 			return NULL;
 		}
 	}
@@ -262,7 +262,7 @@ int16_t *sintetizar_cancion(FILE *midi, FILE *sintetizador, int f_m, size_t *can
 	destruir_nota_contenedor_t(contenedor);
 	destruir_synt_t(synt);
 	tramo_destruir(muestrea_nota);
-	destruir_matriz(t);
+	//tramo_destruir(muestra_modulada);
 
 
 	int16_t *vect_wave = crear_muestras(destino, crear_factor_escala(grand_max,grand_min), cantidad);
@@ -286,7 +286,7 @@ float crear_factor_escala(float maximo, float minimo){
 	return fabs(b);
 }
 
-int16_t *crear_muestras(tramo_t *t, float v, size_t *n;){
+int16_t *crear_muestras(tramo_t *t, float v, size_t *n){
 	
 	int16_t *vect_wave = malloc(t->n * sizeof(int16_t));
 	if(vect_wave == NULL)
@@ -295,7 +295,7 @@ int16_t *crear_muestras(tramo_t *t, float v, size_t *n;){
 	for(size_t i = 0; i < t->n; i++)
 		vect_wave[i] = t->v[i] * v;
 	
-	*n = t->n
+	*n = t->n;
 
 	return vect_wave;
 }

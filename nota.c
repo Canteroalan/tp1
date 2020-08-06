@@ -154,12 +154,12 @@ bool leer_notas(FILE *f, nota_contenedor_t *contenedor, char channel, int pps){
 }
 
 
-float leer_frecuencia_nota(note_t *nota){
+float leer_frecuencia_nota(note_t nota){
     int i;
 
     for(i = 0; i < 12; i++)
         if(! strcmp(nota->nota, notas[i]))
             break;
 
-    return 440 * (pow((1.0) / 2, 4 - nota->octava)) * (pow(2, (i - 9) / 12));
+    return 440 * (pow((1.0) / 2, 4 - nota.octava)) * (pow(2, (i - 9) / 12));
 }

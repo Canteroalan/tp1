@@ -68,7 +68,7 @@ nota_contenedor_t *crear_nota_contenedor_t(FILE *f, char canal, int pps);
 void destruir_note_t(note_t *note);
 void destruir_nota_contenedor_t(nota_contenedor_t *t);
 bool leer_notas(FILE *f, nota_contenedor_t *contenedor,char channel, int pps);
-float leer_frecuencia_nota(note_t *nota);
+float leer_frecuencia_nota(note_t nota);
 
 
 #endif

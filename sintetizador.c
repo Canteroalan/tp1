@@ -201,36 +201,3 @@ bool leer_func_mod(char *s, char *func_mod, float parametros[3]){
 		printf("\n");
 	}
 }*/
-
-float **generar_matriz_armonicos(synt_t *synt){
-
-	float **armonicos = malloc(2 * sizeof(float *));
-	if(armonicos == NULL)
-		return NULL;
-
-	for(size_t i = 0; i < 2; i++){
-
-		float *almacenador = malloc(synt->cantidad_armonicos * sizeof(float));
-		if(almacenador == NULL){
-			free(armonicos);
-			return NULL;
-		}
-
-		armonicos[i] = almacenador;
-	}
-
-	for(size_t j = 0; j < synt->cant_armonicos; j++){
-		armonicos [j][0] = synt->frecuencia[j];
-		armonicos [j][1] = synt->intensidad[j];
-	}
-
-	return armonicos;
-}
-
-void destruir_matriz(float **r, size_t cantidad_de_columnas){
-	for(size_t i = 0; i < cantidad_de_columnas; i++)
-		free(r[i]);
-	
-	free(r);
-}
-

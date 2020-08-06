@@ -31,7 +31,5 @@ bool leer_func_mod(char *s, char *func_mod, float parametros[3]);
 
 //void imprimir_synt_t(synt_t *synt);
 
-float **generar_matriz_armonicos(synt_t *synt);
-void destruir_matriz(float **r, size_t cantidad_de_columnas);
 
 #endif
