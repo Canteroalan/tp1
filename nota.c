@@ -134,15 +134,16 @@ bool leer_notas(FILE *f, nota_contenedor_t *contenedor, char channel, int pps){
                 //GUARDADO DE DATOS EN CONTENEDOR DE NOTES DE 1 CANAL:
                 if(channel == canal){
 	                if(encendida == mem){
-				mem*=2;
-                            note_t *aux = realloc(contenedor->notes, sizeof(note_t) * 100);
-                        if(aux == NULL){
-                            destruir_nota_contenedor_t(contenedor);
-                                return false;
-                            }
+						mem*=2;
+    	                note_t *aux = realloc(contenedor->notes, sizeof(note_t) * mem);
+        	            if(aux == NULL){
+            	            destruir_nota_contenedor_t(contenedor);
+                	        return false;
+                    	}
+                    	contenedor->notes = aux;
+                    }
 
                     if(evento == NOTA_ENCENDIDA && buffer[EVNOTA_VELOCIDAD] != 0){
-			    printf("%ld\n",encendida);
                 	   contenedor->notes[encendida].intensidad = buffer[EVNOTA_VELOCIDAD];
                 	   contenedor->notes[encendida].t0 = tiempo;
                 	   contenedor->notes[encendida].octava = octava;
@@ -156,8 +157,7 @@ bool leer_notas(FILE *f, nota_contenedor_t *contenedor, char channel, int pps){
                 	   apagada++;
                     }
 
-                        contenedor->notes = aux;
-                    }
+			    	printf("%ld\n",encendida);
                 }
 
             }
@@ -166,6 +166,8 @@ bool leer_notas(FILE *f, nota_contenedor_t *contenedor, char channel, int pps){
     }
 
     contenedor->cant_notas = encendida;
+
+    printf("Finaliza leer notas\n");
 
     return true;
 }
