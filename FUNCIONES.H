@@ -1,5 +1,5 @@
-#ifndef FUNCIONES.H
-#define FUNCIONES.H
+#ifndef FUNCIONES_H
+#define FUNCIONES_H
 
 //funciones_modulacion.c
 float modulacion_constante(double t, float params[3]);

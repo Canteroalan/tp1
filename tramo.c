@@ -197,7 +197,7 @@ tramo_t *modulacion(tramo_t *t, synt_t *s, float *h, float *l){
 }
 
 
-int16_t * sintetizar_cancion(FILE *midi, FILE *sintetizador, int f_m, size_t *cantidad, char canal, int pps){
+int16_t *sintetizar_cancion(FILE *midi, FILE *sintetizador, int f_m, size_t *cantidad, char canal, int pps){
 	
 	nota_contenedor_t *contenedor = crear_nota_contenedor_t(m, canal, pps);
 	if(contenedor == NULL)
@@ -298,6 +298,10 @@ int16_t *crear_muestras(tramo_t *t, float v, size_t *n;){
 	*n = t->n
 
 	return vect_wave;
+}
+
+void destruir_int16_t(int16_t *v){
+	free(v);
 }
 
 

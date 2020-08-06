@@ -58,14 +58,14 @@ int main(int argc, char *argv[]){
 	//imprimir_synt_t(synt);
 
 	if(! escribir_wave(w, n, f_m, v)){
-		tramo_destruir(tramo);
+		destruir_int16_t(v);
 		fclose(s);
 		fclose(m);
 		fclose(w);
 		return 1;
 	}
 
-
+	destruir_int16_t(v);
 	fclose(s);
 	fclose(m);
 	fclose(w);

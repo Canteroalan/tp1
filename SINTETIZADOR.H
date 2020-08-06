@@ -1,5 +1,5 @@
-#ifndef SINTETIZADOR
-#define SINTETIZADOR
+#ifndef SINTETIZADOR_H
+#define SINTETIZADOR_H
 
 #include <string.h>
 #include <stdio.h>

@@ -1,5 +1,5 @@
-#ifndef ARGUMENTOS
-#define ARGUMENTOS
+#ifndef ARGUMENTOS_H
+#define ARGUMENTOS_H
 
 #include <string.h>
 #include <stdio.h>

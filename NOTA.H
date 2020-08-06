@@ -1,5 +1,5 @@
-#ifndef NOTA
-#define NOTA
+#ifndef NOTA_H
+#define NOTA_H
 
 #include <stdio.h>
 #include <stdlib.h>
