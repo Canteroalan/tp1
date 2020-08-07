@@ -139,7 +139,7 @@ bool leer_sintetizador(FILE *s, synt_t *synt){
 
 bool leer_func_mod(char *s, char *func_mod, float parametros[3]){
 	int contador = 1;
-    
+
     for(size_t i = 0; s[i] != '\n'; i++)
         if(s[i] == ' ')
         	contador++;

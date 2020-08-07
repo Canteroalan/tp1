@@ -114,7 +114,7 @@ bool leer_notas(FILE *f, nota_contenedor_t *contenedor, char channel, int pps){
                 // METAEVENTO:
                 if(buffer[METAEVENTO_TIPO] == METAEVENTO_FIN_DE_PISTA){
                 	putchar('\n');
-                    printf("Final de la pista %d.\n", pista);
+                    //printf("Final de la pista %d.\n", pista);
                     break;
                 }
 
@@ -157,7 +157,7 @@ bool leer_notas(FILE *f, nota_contenedor_t *contenedor, char channel, int pps){
                 	   apagada++;
                     }
 
-			    	printf("%ld\n",encendida);
+			    	//printf("%ld\n",encendida);
                 }
 
             }
@@ -167,7 +167,7 @@ bool leer_notas(FILE *f, nota_contenedor_t *contenedor, char channel, int pps){
 
     contenedor->cant_notas = encendida;
 
-    printf("Finaliza leer notas\n");
+    //printf("Finaliza leer notas\n");
 
     return true;
 }
@@ -176,10 +176,10 @@ bool leer_notas(FILE *f, nota_contenedor_t *contenedor, char channel, int pps){
 float leer_frecuencia_nota(note_t n){
     int i;
 
-    nota_t notas[12];
+    //nota_t *notas;
 
     for(i = 0; i < 12; i++)
-        if(! strcmp(n.nota, codificar_nota(notas[i])))
+        if(! strcmp(n.nota, codificar_nota(i)))
             break;
 
     return 440 * (pow((1.0) / 2, 4 - n.octava)) * (pow(2, (i - 9) / 12));

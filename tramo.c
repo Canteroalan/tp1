@@ -154,7 +154,7 @@ bool tramo_extender(tramo_t *destino, const tramo_t *extension){
 //TRAMO
 
 double calcular_tf(note_t nota, synt_t *s){ 
-	return nota.t0 + nota.duracion + s->parametros[0][3];
+	return nota.t0 + nota.duracion + s->parametros[2][0];
 }
 
 void determina_max_and_min(float *max, float *min, float v){  
@@ -180,12 +180,12 @@ tramo_t *modulacion(tramo_t *t, synt_t *s, float *h, float *l){
 		}
 
         if(i > n_ataque && i < n_sostenido){
-		t->v[i] = t->v[i] * modula_funcion(s->func_mod[1], s->parametros[0], tiempo);
+		t->v[i] = t->v[i] * modula_funcion(s->func_mod[1], s->parametros[1], tiempo);
 		determina_max_and_min(&max,&min, t->v[i]);
 		}
 
 		if(i > n_sostenido && i < t->n){
-        	t->v[i] = t->v[i] * modula_funcion(s->func_mod[2], s->parametros[0], tiempo);
+        	t->v[i] = t->v[i] * modula_funcion(s->func_mod[2], s->parametros[2], tiempo);
 			determina_max_and_min(&max,&min, t->v[i]);
 		}
 
