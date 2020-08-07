@@ -2,21 +2,30 @@
 #include<stdlib.h>
 #include<string.h>
 
+#include"pruebita.h"
+
 #define MAX 256
 
-typedef struct {
-	float * armonicos[2];
-	size_t cantidad_armonicos;
-	char *func_mod[3];
-	float  parametros[3][3];
-} synt_t;
-
-synt_t * crear_synt_t(void){
+synt_t * crear_synt_t(size_t n){
 	synt_t * t=malloc(sizeof(synt_t));
 
 	if(t == NULL)
 		return NULL;
-	
+
+        t->frecuencia=malloc(n*sizeof(float));
+
+	if(t->frecuencia == NULL){
+		free(t);
+		return NULL;
+	}
+
+	t->intensidad=malloc(n*sizeof(float));
+
+	if(t->intensidad == NULL){
+		free(t->frecuencia);
+		free(t);
+		return NULL;
+	}
 	return t;
 }
 
@@ -51,7 +60,6 @@ void leer_parametros(char *s,size_t p,float *v){
 		if(s[i]==' ')
 			contador++;
 	}
-
 	size_t n=0;
 	for(size_t i=0;i<contador+1;i++){
 		char r[MAX];
@@ -65,36 +73,26 @@ void leer_parametros(char *s,size_t p,float *v){
 }
 
 void destruir_synt_t(synt_t * r){
-	for(size_t i=0;i<3;i++){
-		if(i<2)
-		free(r->armonicos[i]);
+	free(r->frecuencia);
+	free(r->intensidad);
+	for(size_t i=0;i<3;i++)
 		free(r->func_mod[i]);
-	}
 	free(r);
 }
 
 synt_t *leer_archivo_de_sintetizador(FILE *r){
        	char s[MAX];
        	size_t n = atoi(fgets(s, MAX, r));
-	synt_t * archivador=crear_synt_t();
-	
-	float * multiplicador=malloc(n*sizeof(float));
-	if(multiplicador == NULL)
-		return NULL;
+	synt_t * archivador=crear_synt_t(n);
 
-	float * intensidad=malloc(n*sizeof(float));
-	if(intensidad == NULL){
-		free(multiplicador);
+	if(archivador == NULL)
 		return NULL;
-	}
 		
 	for(size_t i=0;i<n;i++){
-		multiplicador[i]=(i+1);
+		archivador->frecuencia[i]=(i+1);
 		char aux[MAX];
-		intensidad[i]=leer_intensidad(fgets(aux,MAX,r));
+		archivador->intensidad[i]=leer_intensidad(fgets(aux,MAX,r));
 	}
-	archivador->armonicos[0]=multiplicador;
-	archivador->armonicos[1]=intensidad;
 	archivador->cantidad_armonicos=n;
 	for(size_t i=0;i<3;i++){
 		char aux[MAX];
@@ -105,25 +103,4 @@ synt_t *leer_archivo_de_sintetizador(FILE *r){
 	return archivador;
 }
 				
-int main(){
-	FILE *p = fopen("sintetizador.txt","rt");
-
-	if(p == NULL)
-		return 1;
-
-	synt_t *s = leer_archivo_de_sintetizador(p);
-	printf("%ld\n",s->cantidad_armonicos);
-	for(size_t j=0;j<s->cantidad_armonicos;j++)
-			printf("%f %f\n",s->armonicos[0][j],s->armonicos[1][j]);
-
-        for(size_t i=0;i<3;i++){
-			printf("%s ",s->func_mod[i]);
-			for(size_t j=0;j<3;j++)
-				printf("%f ",s->parametros[i][j]);
-			printf("\n");
-	}
-	destruir_synt_t(s);
-	fclose(p);
-	return 0;
-}
 
