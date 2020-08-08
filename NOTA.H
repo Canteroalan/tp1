@@ -49,7 +49,7 @@ typedef enum {
 typedef struct _note {
     float  intensidad;
     double t0;
-    uint32_t duracion;
+    double duracion;
     unsigned char octava;
     const char *nota;
 }note_t;

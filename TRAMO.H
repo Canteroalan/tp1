@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-#include "TRAMO.H"
+
 #include "NOTA.H"
 #include "FUNCIONES.H"
 #include "SINTETIZADOR.H"
@@ -32,7 +32,7 @@ void determina_max_and_min(float *max, float *min, float v);
 tramo_t *modulacion(tramo_t *t, synt_t *s, float *h, float *l);
 int16_t *sintetizar_cancion(FILE *midi, FILE *sintetizador, int f_m, size_t *cantidad, char canal, int pps);
 float crear_factor_escala(float maximo, float minimo);
-int16_t *crear_muestras(tramo_t *t, float v, size_t *n);
+int16_t *crear_muestras(tramo_t *t, float v);
 void destruir_int16_t(int16_t *v);
 
 #endif

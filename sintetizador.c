@@ -145,8 +145,10 @@ bool leer_func_mod(char *s, char *func_mod, float parametros[3]){
         	contador++;
 
     if(contador == 1){
-    	for(size_t j = 0; s[j] != '\n'; j++)
-    			func_mod[j] = s[j];
+    	for(size_t j = 0; s[j] != '\n'; j++){
+			func_mod[j] = s[j];
+			func_mod[j + 1] = '\0';
+    	}
 
     	for(size_t i = 0; i < 3; i++)
     		parametros[i] = 0;
@@ -162,8 +164,10 @@ bool leer_func_mod(char *s, char *func_mod, float parametros[3]){
 
     	if(i == 0){
     		size_t j;
-    		for(j = 0; s[j] != ' '; j++)
+    		for(j = 0; s[j] != ' '; j++){
     			func_mod[j] = s[j];
+    			func_mod[j + 1] = '\0';
+    		}
 
     		n += (j + 1);
     	}
