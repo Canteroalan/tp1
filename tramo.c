@@ -174,29 +174,38 @@ void determina_max_and_min(float *max, float *min, float v){
 
 tramo_t *modulacion(tramo_t *t, synt_t *s, float *h, float *l){
    	size_t n_ataque = t->f_m * s->parametros[0][0];
-   	size_t n_decaimiento = t->n + t->f_m * s->parametros[2][0];
+//	printf("%f\n",s->parametros [0][0]);
+	//printf("%ld\n",n_ataque);
+	 size_t n_decaimiento = t->f_m * s->parametros [2][0];
+   	size_t n_sostenido= t->n -(n_decaimiento)-n_ataque;
+//	printf("%f\n",s->parametros[1][0]);
+	//printf("%ld\n",n_sostenido);
+//	size_t n_decaimiento = t->f_m * s->parametros [1][0];
+//	printf("%f\n",s->parametros[2][0]);
+	//printf("%ld\n",n_decaimiento);
 	float max = 0;
 	float min = 0;
 
 	for(size_t i = 0; i < t->n; i++){
-		double tiempo = t->t0 + (double) i / t->f_m;
+		double tiempo = (double) i / t->f_m;
 
 		if(i < n_ataque){
 			t->v[i] = t->v[i] * modula_funcion(s->func_mod[0], s->parametros[0], tiempo);
 			determina_max_and_min(&max, &min, t->v[i]);
 		}
 
-        if(i > n_ataque && i < t->n){
+        if(i > n_ataque && i < n_sostenido){
 			t->v[i] = t->v[i] * modula_funcion(s->func_mod[1], s->parametros[1], tiempo);
 			determina_max_and_min(&max,&min, t->v[i]);
 		}
 
-		if(i > t->n && i < n_decaimiento){
-        	t->v[i] = t->v[i] * modula_funcion(s->func_mod[2], s->parametros[2], tiempo);
+		if(i > n_sostenido && i < t->n){
+        	t->v[i] = t->v[i] * modula_funcion(s->func_mod[2], s->parametros[2], tiempo)* modula_funcion(s->func_mod[1], s->parametros[1], tiempo);
+
 			determina_max_and_min(&max,&min, t->v[i]);
 		}
 
-		//t->v[i] = 0;
+		
 	}
     
     *h = max;
@@ -204,6 +213,8 @@ tramo_t *modulacion(tramo_t *t, synt_t *s, float *h, float *l){
     
     return t;
 }
+
+
 
 
 int16_t *sintetizar_cancion(FILE *midi, FILE *sintetizador, int f_m, size_t *cantidad, char canal, int pps){
@@ -216,6 +227,11 @@ int16_t *sintetizar_cancion(FILE *midi, FILE *sintetizador, int f_m, size_t *can
 	if(synt == NULL){
 		destruir_nota_contenedor_t(contenedor);
 		return NULL;
+	}
+	for(size_t i=0;i<3;i++){
+		for(size_t j=0;j<3;j++)
+			printf("%f ",synt->parametros[i][j]);
+		printf("\n");
 	}
 
 	float grand_max = 0; //aca se va  a guardar el valor mas grande de los maximos 
@@ -308,7 +324,7 @@ int16_t *crear_muestras(tramo_t *t, float v){
 		return NULL;
 
 	for(size_t i = 0; i < t->n; i++)
-		vect_wave[i] = t->v[i] * v;
+		vect_wave[i] = t->v[i] * v/10;
 	printf("HOLA\n");
 
 	return vect_wave;
