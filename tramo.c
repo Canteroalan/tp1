@@ -71,8 +71,8 @@ tramo_t *_tramo_crear(double t0, double tf, int f_m){
         return NULL;
     }
 
-	tramo_t r={muestras, n, t0, f_m};
-    *tramo=r;
+	tramo_t r = {muestras, n, t0, f_m};
+    *tramo = r;
 
     return tramo;
 }
@@ -89,8 +89,8 @@ tramo_t *tramo_clonar(const tramo_t *t){
     if(clon == NULL)
     	return NULL;
 
-    for(size_t i=0;i<t->n;i++)
-        clon->v[i]=t->v[i];
+    for(size_t i = 0; i < t->n; i++)
+        clon->v[i] = t->v[i];
 
     return clon;
 }
@@ -119,7 +119,7 @@ bool tramo_redimensionar(tramo_t *t, double tf){
             aux[i] = 0;
     }
 
-    t->n=new_n;
+    t->n = new_n;
 
     return true;
 }
@@ -205,15 +205,15 @@ int16_t *sintetizar_cancion(FILE *midi, FILE *sintetizador, int f_m, size_t *can
 		t[i][1] = synt->intensidad[i];
 	}
 
-	tramo_t *destino = _tramo_crear(0, 0, f_m);
+	tramo_t *destino = _tramo_crear(0, 1, f_m);
 	if(destino == NULL){
 		destruir_nota_contenedor_t(contenedor);
 		destruir_synt_t(synt);
 		return NULL;
 	}
 
-	destino->n = 1;
-	
+	inicializar_muestras(destino->v, destino->n);
+
 	for(size_t i = 0; i < contenedor->cant_notas; i++){
 		float f = leer_frecuencia_nota(contenedor->notes[i]);
 		double tf = calcular_tf(contenedor->notes[i], synt);
@@ -244,7 +244,7 @@ int16_t *sintetizar_cancion(FILE *midi, FILE *sintetizador, int f_m, size_t *can
 	float max = 0;
 	float min = 0;
 
-	for(size_t i = 0; i < destino->n; i++)
+	for(size_t i = 1; i < destino->n; i++)
 		determina_max_and_min(&max, &min, destino->v[i]);
 
 	//ESCALADO:

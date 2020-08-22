@@ -111,7 +111,7 @@ bool leer_sintetizador(FILE *s, synt_t *synt){
 		fgets(aux, MAX, s);
 		
 		//En caso de que la frecuencia supere 1 cifra.
-		if(((int) (synt->frecuencia[i - 1] + 1) / mult) != 0){
+		if(((i + 1) / mult) != 0){
 			anchos_fa[0]++;
 			mult *= 10;
 		}
