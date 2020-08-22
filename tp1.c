@@ -55,9 +55,6 @@ int main(int argc, char *argv[]){
 		return 1;
 	}
 
-	//imprimir_synt_t(synt);
-	printf("JEJEJE\n");
-
 	if(! escribir_wave(w, n, f_m, v)){
 		destruir_int16_t(v);
 		fclose(s);

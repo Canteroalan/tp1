@@ -119,9 +119,8 @@ int leer_pulso(int argc, char *argv[]){
 
 
 bool escribir_wave(FILE *w, size_t n, int f_m, int16_t *v){
-    printf("PORFAAAAA\n");
     char chunk_id[4] = "RIFF";
-    uint32_t chunk_size = 36 + 2 * n; //falta n.
+    uint32_t chunk_size = 36 + 2 * n;
     char format[4] = "WAVE";
     char sub_chunk1_id[4] = "fmt ";
     uint32_t sub_chunk1_size = 16;
@@ -133,22 +132,13 @@ bool escribir_wave(FILE *w, size_t n, int f_m, int16_t *v){
     uint16_t bits_per_sample = 16;
     char sub_chunk2_id[4] = "data";
     uint32_t sub_chunk2_size = 2 * n;
-    //int16_t data[n]; //me la dan en los parametros. Secuencia de n muestras.
 
-    /*for(size_t i = 0; i < n; i++)
-        data[i] = 0;*/
-
-    printf("HOLAAAAAA\n");
 
     if(fwrite(chunk_id, sizeof(char), 4, w) != 4)
         return false;
 
-    printf("RIFFFFF\n");
-
     if(fwrite(&chunk_size, sizeof(uint32_t), 1, w) != 1)
         return false;
-
-    printf("CHUNKKKK\n");
 
     if(fwrite(format, sizeof(char), 4, w) != 4)
         return false;
@@ -183,12 +173,8 @@ bool escribir_wave(FILE *w, size_t n, int f_m, int16_t *v){
     if(fwrite(&sub_chunk2_size, sizeof(uint32_t), 1, w) != 1)
         return false;
 
-    printf("HOALALAlalALALAALALAL\n");
-
    if(fwrite(v, sizeof(int16_t), n, w) != n)
         return false;
-    
-    printf("holllllllll\n");
 
     return true;
 }

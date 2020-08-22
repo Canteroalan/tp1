@@ -113,7 +113,7 @@ bool leer_notas(FILE *f, nota_contenedor_t *contenedor, char channel, int pps){
             if(evento == METAEVENTO && canal == 0xF) {
                 // METAEVENTO:
                 if(buffer[METAEVENTO_TIPO] == METAEVENTO_FIN_DE_PISTA){
-                	putchar('\n');
+                	//putchar('\n');
                     //printf("Final de la pista %d.\n", pista);
                     break;
                 }

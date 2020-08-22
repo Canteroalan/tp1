@@ -172,50 +172,29 @@ void determina_max_and_min(float *max, float *min, float v){
 		*min = v;
 }
 
-tramo_t *modulacion(tramo_t *t, synt_t *s, float *h, float *l){
+tramo_t *modulacion(tramo_t *t, synt_t *s){
    	size_t n_ataque = t->f_m * s->parametros[0][0];
-//	printf("%f\n",s->parametros [0][0]);
-	//printf("%ld\n",n_ataque);
-	 size_t n_decaimiento = t->f_m * s->parametros [2][0];
-   	size_t n_sostenido= t->n -(n_decaimiento)-n_ataque;
-//	printf("%f\n",s->parametros[1][0]);
-	//printf("%ld\n",n_sostenido);
-//	size_t n_decaimiento = t->f_m * s->parametros [1][0];
-//	printf("%f\n",s->parametros[2][0]);
-	//printf("%ld\n",n_decaimiento);
-	float max = 0;
-	float min = 0;
+	size_t n_decaimiento = t->f_m * s->parametros [2][0];
+   	size_t n_sostenido = t->n - n_decaimiento;
 
 	for(size_t i = 0; i < t->n; i++){
-		double a = (double) i / t->f_m;
+		double tiempo = (double) i / t->f_m;
 
 		if(i < n_ataque){
-			t->v[i] = t->v[i] * modula_funcion(s->func_mod[0], s->parametros[0], a);
-		//	printf("ataque  %f\n",modula_funcion(s->func_mod[0], s->parametros[0], a));
-			determina_max_and_min(&max, &min, t->v[i]);
+			t->v[i] = t->v[i] * modula_funcion(s->func_mod[0], s->parametros[0], tiempo);
+			//printf("ataque  %f\n",modula_funcion(s->func_mod[0], s->parametros[0], a));
 		}
 
         if(i > n_ataque && i < n_sostenido){
-			t->v[i] = t->v[i] * modula_funcion(s->func_mod[1], s->parametros[1], a);
-		//	 printf("sostenido  %f\n",modula_funcion(s->func_mod[1], s->parametros[1],a));
-			determina_max_and_min(&max,&min, t->v[i]);
+			t->v[i] = t->v[i] * modula_funcion(s->func_mod[1], s->parametros[1], tiempo);
+			//printf("sostenido  %f\n",modula_funcion(s->func_mod[1], s->parametros[1],a));
 		}
 
 		if(i > n_sostenido && i < t->n){
-			t->v[i] = t->v[i] * modula_funcion(s->func_mod[2], s->parametros[2],a) * modula_funcion(s->func_mod[1], s->parametros[1], a);
-		//	 printf(" decaimiento %f\n",modula_funcion(s->func_mod[2], s->parametros[2],a));
-
-
-	
-
-			determina_max_and_min(&max,&min, t->v[i]);
+			t->v[i] = t->v[i] * modula_funcion(s->func_mod[2], s->parametros[2], tiempo) * modula_funcion(s->func_mod[1], s->parametros[1], tiempo);
+			//printf(" decaimiento %f\n",modula_funcion(s->func_mod[2], s->parametros[2],a));
 		}
-
-		
 	}
-    
-    *h = max;
-	*l = min;
     
     return t;
 }
@@ -234,16 +213,6 @@ int16_t *sintetizar_cancion(FILE *midi, FILE *sintetizador, int f_m, size_t *can
 		destruir_nota_contenedor_t(contenedor);
 		return NULL;
 	}
-	for(size_t i=0;i<3;i++){
-		for(size_t j=0;j<3;j++)
-			printf("%f ",synt->parametros[i][j]);
-		printf("\n");
-	}
-
-	float grand_max = 0; //aca se va  a guardar el valor mas grande de los maximos 
-	float grand_min = 0; //aca se va  a guardar el valor mas chico de los minimos
-	float max=0, min=0;
-
 
 	float t[synt->cantidad_armonicos][2];
 
@@ -258,6 +227,7 @@ int16_t *sintetizar_cancion(FILE *midi, FILE *sintetizador, int f_m, size_t *can
 		destruir_synt_t(synt);
 		return NULL;
 	}
+
 	destino->n = 1;
 	
 	for(size_t i = 0; i < contenedor->cant_notas; i++){
@@ -272,13 +242,7 @@ int16_t *sintetizar_cancion(FILE *midi, FILE *sintetizador, int f_m, size_t *can
 			return NULL;
 		}
 
-		muestrea_nota = modulacion(muestrea_nota, synt, &max, &min);
-
-		if(max > grand_max)                                              
-			grand_max = max;
-
-		if(min < grand_min)
-			grand_min = min;
+		muestrea_nota = modulacion(muestrea_nota, synt);
 
 		//printf("%f\n", calcular_tf_tramo(destino));
 
@@ -296,7 +260,16 @@ int16_t *sintetizar_cancion(FILE *midi, FILE *sintetizador, int f_m, size_t *can
 		//tramo_destruir(muestra_modulada);
 	}
 
-	int16_t *vect_wave = crear_muestras(destino, crear_factor_escala(grand_max, grand_min));
+
+	float max = 0; //Valor maximo de la cancion.
+	float min = 0; //Valor minimo de la cancion.
+
+	for(size_t i = 0; i < destino->n; i++)
+		determina_max_and_min(&max, &min, destino->v[i]);
+
+	printf("%f;%f\n", max, min);
+
+	int16_t *vect_wave = crear_muestras(destino, crear_factor_escala(max, min));
 	if(vect_wave == NULL){
 		tramo_destruir(destino);
 		return NULL;
@@ -308,14 +281,12 @@ int16_t *sintetizar_cancion(FILE *midi, FILE *sintetizador, int f_m, size_t *can
 	destruir_synt_t(synt);
 	tramo_destruir(destino);
 
-	printf("CHAU\n");
-
 	return vect_wave;
 }
 
 float crear_factor_escala(float maximo, float minimo){
 	float a = MAX_VALOR / maximo;
-	float b = -MIN_VALOR / minimo;
+	float b = (-MIN_VALOR) / minimo;
 	
 	if(a > b)
 		return a;
@@ -332,7 +303,6 @@ int16_t *crear_muestras(tramo_t *t, float v){
 
 	for(size_t i = 0; i < t->n; i++)
 		vect_wave[i] = t->v[i] * v;
-	printf("HOLA\n");
 
 	return vect_wave;
 }
