@@ -177,6 +177,10 @@ tramo_t *modulacion(tramo_t *t, synt_t *s){
 	size_t n_decaimiento = t->f_m * s->parametros [2][0];
    	size_t n_sostenido = t->n - n_decaimiento;
 
+   	double j = 0;
+
+	double t_sostenido = (double) n_sostenido / t->f_m;
+
 	for(size_t i = 0; i < t->n; i++){
 		double tiempo = (double) i / t->f_m;
 
@@ -185,13 +189,15 @@ tramo_t *modulacion(tramo_t *t, synt_t *s){
 			//printf("ataque  %f\n",modula_funcion(s->func_mod[0], s->parametros[0], a));
 		}
 
-        if(i > n_ataque && i < n_sostenido){
-			t->v[i] = t->v[i] * modula_funcion(s->func_mod[1], s->parametros[1], tiempo);
+        if(i >= n_ataque && i <= n_sostenido){
+			t->v[i] = t->v[i] * modula_funcion(s->func_mod[1], s->parametros[1], tiempo - s->parametros[0][0]);
 			//printf("sostenido  %f\n",modula_funcion(s->func_mod[1], s->parametros[1],a));
 		}
 
 		if(i > n_sostenido && i < t->n){
-			t->v[i] = t->v[i] * modula_funcion(s->func_mod[2], s->parametros[2], tiempo) * modula_funcion(s->func_mod[1], s->parametros[1], tiempo);
+			double a = (double) j / t->f_m;
+			j++;
+			t->v[i] = t->v[i] * modula_funcion(s->func_mod[2], s->parametros[2], a) * modula_funcion(s->func_mod[1], s->parametros[1], t_sostenido);
 			//printf(" decaimiento %f\n",modula_funcion(s->func_mod[2], s->parametros[2],a));
 		}
 	}
@@ -257,7 +263,6 @@ int16_t *sintetizar_cancion(FILE *midi, FILE *sintetizador, int f_m, size_t *can
 		//printf("%f\n", calcular_tf_tramo(destino));
 
 		tramo_destruir(muestrea_nota);
-		//tramo_destruir(muestra_modulada);
 	}
 
 
