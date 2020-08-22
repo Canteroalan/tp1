@@ -154,6 +154,7 @@ bool leer_notas(FILE *f, nota_contenedor_t *contenedor, char channel, int pps){
 
                     if((evento == NOTA_ENCENDIDA && buffer[EVNOTA_VELOCIDAD] == 0) || evento == NOTA_APAGADA){
                 	   contenedor->notes[apagada].duracion = tiempo - contenedor->notes[apagada].t0;
+			  // printf("%f\n",tiempo-contenedor->notes[apagada].t0);
                 	   apagada++;
                     }
 
@@ -182,5 +183,5 @@ float leer_frecuencia_nota(note_t n){
         if(! strcmp(n.nota, codificar_nota(i)))
             break;
 
-    return 440 * (pow((1.0) / 2, 4 - n.octava)) * (pow(2, (i - 9) / 12));
+    return 440 * (pow((1.0) / 2, 4 - n.octava)) * (pow(2, (i - 9.0) / 12));
 }

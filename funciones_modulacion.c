@@ -46,9 +46,9 @@ float modulacion_linear(double t, float params[3]) {
 float modulacion_invlinear(double t, float params[3]) {
 	float n = 1 - (t / params[0]);
 	
-	if(n > 0)
+	if(n > 0){
 		return n;
-	
+	}
 	return 0; 
 }
 
@@ -92,10 +92,10 @@ float modulacion_invlogaritmo(double t, float params[3]) {
 }
 
 float modulacion_tri(double t, float params[3]) {
-   	if(t < params[1])
-		return (t * params[2]) / params[1];
-        
-    return ((t - params[1]) / (params[1] - params[0])) * (params[2] - 1) + params[2];
+   	if(t < params[1]){
+		return ((t * params[2]) / params[1]);
+	}
+    return (((t - params[1]) / (params[1] - params[0])) * (params[2] - 1)) + params[2];
 }
 
 float modulacion_pulsos(double t, float params[3]) {
