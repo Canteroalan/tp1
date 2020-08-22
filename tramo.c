@@ -162,8 +162,6 @@ tramo_t *modulacion(tramo_t *t, synt_t *s){
 	size_t n_decaimiento = t->f_m * s->parametros [2][0];
    	size_t n_sostenido = t->n - n_decaimiento;
 
-   	double j = 0;
-
 	double t_sostenido = (double) n_sostenido / t->f_m;
 
 	for(size_t i = 0; i < t->n; i++){
@@ -175,11 +173,8 @@ tramo_t *modulacion(tramo_t *t, synt_t *s){
         if(i >= n_ataque && i <= n_sostenido)
 			t->v[i] = t->v[i] * traducir_funcion_modulacion(s->func_mod[1], s->parametros[1], tiempo - s->parametros[0][0]);
 
-		if(i > n_sostenido && i < t->n){
-			double a = (double) j / t->f_m;
-			j++;
-			t->v[i] = t->v[i] * traducir_funcion_modulacion(s->func_mod[2], s->parametros[2], a) * traducir_funcion_modulacion(s->func_mod[1], s->parametros[1], t_sostenido);
-		}
+		if(i > n_sostenido && i < t->n)
+			t->v[i] = t->v[i] * traducir_funcion_modulacion(s->func_mod[2], s->parametros[2], tiempo - t_sostenido) * traducir_funcion_modulacion(s->func_mod[1], s->parametros[1], t_sostenido);
 	}
     
     return t;
