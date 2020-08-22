@@ -109,7 +109,7 @@ float modulacion_pulsos(double t, float params[3]) {
 }
 
 
-const float modula_funcion(char *s, float parametros[3], double tiempo){
+const float traducir_funcion_modulacion(char *s, float parametros[3], double tiempo){
 	size_t i = 0;
 
 	while(strcmp(s, funciones[i].cadena))

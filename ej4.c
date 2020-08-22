@@ -9,58 +9,64 @@
 
 const char *formatos[] = {
         [PISTA_UNICA] = "pista unica",
-        [MULTIPISTAS_SINCRONICAS]="multipistas sincronica",
-        [MULTIPISTAS_ASINCRONICAS]="multipistas asincronica",
+        [MULTIPISTAS_SINCRONICAS] = "multipista sincronica",
+        [MULTIPISTAS_ASINCRONICAS] = "multipista asincronica",
 };
 
-const _evento_t eventos[]={
-        [NOTA_APAGADA]={"nota apagada",2},
-        [NOTA_ENCENDIDA]={"nota encendida",2},
-        [NOTA_DURANTE]={"nota durante",2},
-        [CAMBIO_DE_CONTROL]={"cambio de control",2},
-        [CAMBIO_DE_PROGRAMA]={"cambio de programa",1},
-        [VARIAR_CANAL]={"variar canal",1},
-        [CAMBIO_DE_PITCH]={"cambio de pitch",2},
-        [METAEVENTO]={"metaevento",2}
+const _evento_t eventos[] = {
+        [NOTA_APAGADA] = {"nota apagada", 2},
+        [NOTA_ENCENDIDA] = {"nota encendida", 2},
+        [NOTA_DURANTE] = {"nota durante", 2},
+        [CAMBIO_DE_CONTROL] = {"cambio de control", 2},
+        [CAMBIO_DE_PROGRAMA] = {"cambio de programa", 1},
+        [VARIAR_CANAL] = {"variar canal", 1},
+        [CAMBIO_DE_PITCH] = {"cambio de pitch", 2},
+        [METAEVENTO] = {"metaevento", 2}
 };
 
-const char * notas[]={
-        [DO]="C",
-        [DO_BEMOL]="C#",
-        [RE]="D",
-        [RE_BEMOL]="D#",
-        [MI]="E",
-        [FA]="F",
-        [FA_BEMOL]="F#",
-        [SOL]="G",
-        [SOL_BEMOL]="G#",
-        [LA]="A",
-        [LA_BEMOL]="A#",
-        [SI]="B"
+const char *notas[] = {
+        [DO] = "C",
+        [DO_BEMOL] = "C#",
+        [RE] = "D",
+        [RE_BEMOL] = "D#",
+        [MI] = "E",
+        [FA] = "F",
+        [FA_BEMOL] = "F#",
+        [SOL] = "G",
+        [SOL_BEMOL] = "G#",
+        [LA] = "A",
+        [LA_BEMOL] = "A#",
+        [SI] = "B"
 };
 
 bool decodificar_formato(uint16_t valor, formato_t *formato){
         if(valor & MASK_FORMATO)
                 return false;
-        *formato=valor;
+        
+        *formato = valor;
+                
         return true;
 }
 
-bool decodificar_evento(uint8_t valor,evento_t *evento,char *canal,int *longitud){
-        if((valor & MASK_NOTA)==0)
+bool decodificar_evento(uint8_t valor, evento_t *evento, char *canal, int *longitud){
+        if((valor & MASK_NOTA) == 0)
                 return false;
-        *evento=(valor  & ~MASK_NOTA) >> 4;
-        *canal=valor & MASK_CANAL;
-        *longitud=eventos[*evento].longitud;
+
+        *evento = (valor  & ~MASK_NOTA) >> 4;
+        *canal = valor & MASK_CANAL;
+        *longitud = eventos[*evento].longitud;
+        
         return true;
 }
 
-bool decodificar_nota(uint8_t valor,nota_t *nota,signed char *octava){
+bool decodificar_nota(uint8_t valor, nota_t *nota, signed char *octava){
         if(valor & MASK_NOTA){
                 return false;
         }
-        *nota=(valor%12);
-        *octava=(valor/12) - 1;
+
+        *nota = (valor % 12);
+        *octava = (valor / 12) - 1;
+        
         return true;
 }
 

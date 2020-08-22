@@ -17,11 +17,12 @@ synt_t *crear_synt_t(FILE *s){
 	if(synt == NULL)
 		return NULL;
 
-	char *q = malloc(sizeof(char) * MAX);
-	if(q == NULL)
+	//Auxiliar para leer las lineas del sintetizador.txt.
+	char *aux = malloc(sizeof(char) * MAX);
+	if(aux == NULL)
 		return false;
 
-	synt->cantidad_armonicos = atoi(fgets(q, MAX, s));
+	synt->cantidad_armonicos = atoi(fgets(aux, MAX, s));
 
 	synt->frecuencia = malloc(synt->cantidad_armonicos * sizeof(float));
 	if(synt->frecuencia == NULL)
@@ -44,11 +45,11 @@ synt_t *crear_synt_t(FILE *s){
 
 	if(! leer_sintetizador(s, synt)){
 		destruir_synt_t(synt);
-		free(q);
+		free(aux);
 		return NULL;
 	}
 
-	free(q);
+	free(aux);
 
 	return synt;
 }
@@ -98,26 +99,26 @@ void destruir_lineas(char **lineas, size_t n){
 
 bool leer_sintetizador(FILE *s, synt_t *synt){
 	
-	char *q = malloc(sizeof(char) * MAX);
-	if(q == NULL)
+	char *aux = malloc(sizeof(char) * MAX);
+	if(aux == NULL)
 		return false;
 
 	int anchos_fa[3] = {1, 1, 8};
 
-	//int mult = 10;
+	int mult = 10;
 
 	for(size_t i = 0; i < synt->cantidad_armonicos; i++){
-		fgets(q, MAX, s);
+		fgets(aux, MAX, s);
 		
 		//En caso de que la frecuencia supere 1 cifra.
-		/*if(((f[i - 1] + 1) / mult) != 0){
+		if(((int) (synt->frecuencia[i - 1] + 1) / mult) != 0){
 			anchos_fa[0]++;
 			mult *= 10;
-		}*/
+		}
 		
-		char **ss = split(q, anchos_fa, 3);
+		char **ss = split(aux, anchos_fa, 3);
 		if(ss == NULL){
-    		free(q);
+    		free(aux);
         	return false;
     	}
 
@@ -128,11 +129,11 @@ bool leer_sintetizador(FILE *s, synt_t *synt){
 	}
 
 	for(size_t i = 0; i < 3; i++){
-		fgets(q, MAX, s);
-		leer_func_mod(q, synt->func_mod[i], synt->parametros[i]);
+		fgets(aux, MAX, s);
+		leer_func_mod(aux, synt->func_mod[i], synt->parametros[i]);
 	}
 
-	free(q);
+	free(aux);
 
 	return true;
 }
@@ -144,6 +145,7 @@ bool leer_func_mod(char *s, char *func_mod, float parametros[3]){
         if(s[i] == ' ')
         	contador++;
 
+    //Funcion de modulacion sin parametros.
     if(contador == 1){
     	for(size_t j = 0; s[j] != '\n'; j++){
 			func_mod[j] = s[j];
@@ -161,9 +163,9 @@ bool leer_func_mod(char *s, char *func_mod, float parametros[3]){
     size_t n = 0;
 
     for(size_t i = 0; i < (contador - 1); i++){
-
     	if(i == 0){
     		size_t j;
+    		
     		for(j = 0; s[j] != ' '; j++){
     			func_mod[j] = s[j];
     			func_mod[j + 1] = '\0';
@@ -187,20 +189,3 @@ bool leer_func_mod(char *s, char *func_mod, float parametros[3]){
 
     return true;
 }
-
-/*void imprimir_synt_t(synt_t *synt){
-
-	printf("%ld\n", synt->cantidad_armonicos);
-
-	for(size_t i = 0; i < synt->cantidad_armonicos; i++)
-		printf("%f %f\n", synt->frecuencia[i], synt->intensidad[i]);
-
-	for(size_t i = 0; i < 3; i++){
-		printf("%s ", synt->func_mod[i]);
-
-		for(size_t j = 0; j < 3; j++)
-			printf("%f ", synt->parametros[i][j]);
-
-		printf("\n");
-	}
-}*/

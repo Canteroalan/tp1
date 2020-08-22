@@ -111,8 +111,8 @@ int leer_pulso(int argc, char *argv[]){
         }
     }
 
-    /*if(i == argc)
-        pulsoso = ???;*/
+    if(i == argc)
+        pulso = 150;
 
     return pulso;
 }
@@ -126,7 +126,7 @@ bool escribir_wave(FILE *w, size_t n, int f_m, int16_t *v){
     uint32_t sub_chunk1_size = 16;
     uint16_t audio_format = 1;
     uint16_t num_channels = 1;
-    uint32_t sample_rate = f_m; //frecuencia que leemos de argumentos.
+    uint32_t sample_rate = f_m; //Frecuencia que leemos de los argumentos.
     uint32_t byte_rate = 2 * sample_rate;
     uint16_t block_align = 2;
     uint16_t bits_per_sample = 16;

@@ -1,10 +1,12 @@
 #ifndef NOTA_H
 #define NOTA_H
 
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
+
 
 typedef struct {
     char nombre[30];
@@ -45,18 +47,19 @@ typedef enum {
 } nota_t ;
 
 
-
+//TDA de una nota.
 typedef struct _note {
-    float  intensidad;
-    double t0;
-    double duracion;
-    unsigned char octava;
-    const char *nota;
+    float  intensidad; //Tono de la nota.
+    double t0; //Tiempo de inicio de la nota.
+    double duracion; //Tiempo de duracion de la nota.
+    unsigned char octava; //Octava de la nota.
+    const char *nota; //Nombre de la nota.
 }note_t;
 
+//TDA de un contenedor de notas.
 typedef struct _contenedor{
-    size_t cant_notas;
-    note_t *notes;
+    size_t cant_notas; //Cantidad de notas dentro del contenedor.
+    note_t *notes; //Vector de notas dentro del contenedor.
 }nota_contenedor_t;
 
 

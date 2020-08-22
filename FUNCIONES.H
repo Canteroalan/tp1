@@ -17,6 +17,6 @@ float modulacion_invlogaritmo(double t, float params[3]);
 float modulacion_tri(double t, float params[3]);
 float modulacion_pulsos(double t, float params[3]);
 
-const float modula_funcion(char *s, float parametros[3], double tiempo);
+const float traducir_funcion_modulacion(char *s, float parametros[3], double tiempo);
 
 #endif
