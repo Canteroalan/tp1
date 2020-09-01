@@ -14,36 +14,16 @@
 
 
 int main(int argc, char *argv[]){
-	if(argc < 7){
-		uso(argv);
+	
+	FILE *s;
+	FILE *m;
+	FILE *w;
+	char canal;
+	int f_m;
+	int pps;
+
+	if(! procesar_argumentos(argc, argv, &s, &m, &w, &canal, &f_m, &pps))
 		return 1;
-	}
-
-	FILE *s = abrir_sintetizador(argc, argv);
-	if(s == NULL){
-		uso(argv);
-		return 1;
-	}
-
-	FILE *m = abrir_midi(argc, argv);
-	if(m == NULL){
-		uso(argv);
-		fclose(s);
-		return 1;
-	}
-
-	FILE *w = abrir_wave(argc, argv);
-	if(w == NULL){
-		uso(argv);
-		fclose(s);
-		fclose(m);
-		return 1;
-	}
-
-	char canal = leer_canal(argc, argv);
-	int f_m = leer_frecuencia(argc, argv);
-	int pps = leer_pulso(argc, argv);
-
 
 	size_t n;
 
@@ -55,14 +35,8 @@ int main(int argc, char *argv[]){
 		return 1;
 	}
 
-	if(! escribir_wave(w, n, f_m, v)){
-		destruir_int16_t(v);
-		fclose(s);
-		fclose(m);
-		fclose(w);
-		return 1;
-	}
-
+	escribir_wave(w, n, f_m, v);
+	
 	destruir_int16_t(v);
 	fclose(s);
 	fclose(m);

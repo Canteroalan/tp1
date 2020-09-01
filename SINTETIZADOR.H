@@ -26,6 +26,6 @@ char **split(const char *s, const int *anchos, size_t ncampos);
 void destruir_lineas(char **lineas, size_t n);
 bool leer_sintetizador(FILE *s, synt_t *synt);
 bool leer_func_mod(char *s, char *func_mod, float parametros[3]);
-
+void generar_matriz_armonicos(synt_t *synt, float matriz[][2]);
 
 #endif

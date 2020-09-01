@@ -189,3 +189,11 @@ bool leer_func_mod(char *s, char *func_mod, float parametros[3]){
 
     return true;
 }
+
+void generar_matriz_armonicos(synt_t *synt, float matriz[][2]){
+
+	for(size_t i = 0; i < synt->cantidad_armonicos; i++){
+		matriz[i][0] = synt->frecuencia[i];
+		matriz[i][1] = synt->intensidad[i];
+	}
+}

@@ -149,12 +149,14 @@ double calcular_tf(note_t nota, synt_t *s){
 	return nota.t0 + nota.duracion + s->parametros[2][0];
 }
 
-void determina_max_and_min(float *max, float *min, float v){  
-	if(v > *max)
-		*max = v;
+void determina_max_and_min(float *max, float *min, tramo_t *t){  
+	for(size_t i = 1; i < t->n; i++){
+		if(t->v[i] > *max)
+			*max = t->v[i];
 
-	if(v < *min)
-		*min = v;
+		if(t->v[i] < *min)
+			*min = t->v[i];
+	}
 }
 
 tramo_t *modulacion(tramo_t *t, synt_t *s){
@@ -193,12 +195,9 @@ int16_t *sintetizar_cancion(FILE *midi, FILE *sintetizador, int f_m, size_t *can
 	}
 
 	//MATRIZ DE ARMONICOS:
-	float t[synt->cantidad_armonicos][2];
-
-	for(size_t i = 0; i < synt->cantidad_armonicos; i++){
-		t[i][0] = synt->frecuencia[i];
-		t[i][1] = synt->intensidad[i];
-	}
+	float matriz[synt->cantidad_armonicos][2];
+	generar_matriz_armonicos(synt, matriz);
+	
 
 	tramo_t *destino = _tramo_crear(0, 1, f_m);
 	if(destino == NULL){
@@ -214,7 +213,7 @@ int16_t *sintetizar_cancion(FILE *midi, FILE *sintetizador, int f_m, size_t *can
 		double tf = calcular_tf(contenedor->notes[i], synt);
 
 		//MUESTREO DE UNA NOTA:
-		tramo_t *muestrea_nota = tramo_crear_muestreo(contenedor->notes[i].t0, tf, f_m, f, contenedor->notes[i].intensidad, t, synt->cantidad_armonicos);
+		tramo_t *muestrea_nota = tramo_crear_muestreo(contenedor->notes[i].t0, tf, f_m, f, contenedor->notes[i].intensidad, matriz, synt->cantidad_armonicos);
 		if(muestrea_nota == NULL){
 			destruir_nota_contenedor_t(contenedor);
 			destruir_synt_t(synt);
@@ -238,15 +237,10 @@ int16_t *sintetizar_cancion(FILE *midi, FILE *sintetizador, int f_m, size_t *can
 	//CALCULO DEL MAXIMO Y MINIMO:
 	float max = 0;
 	float min = 0;
-
-	for(size_t i = 1; i < destino->n; i++)
-		determina_max_and_min(&max, &min, destino->v[i]);
-
-	//ESCALADO:
-	float escala = crear_factor_escala(max, min);
+	determina_max_and_min(&max, &min, destino);
 
 	//CREACION DE VECTORES WAVE:
-	int16_t *vect_wave = crear_muestras(destino, escala);
+	int16_t *vect_wave = crear_muestras(destino, max, min);
 	if(vect_wave == NULL){
 		tramo_destruir(destino);
 		return NULL;
@@ -271,14 +265,15 @@ float crear_factor_escala(float maximo, float minimo){
 	return b;
 }
 
-int16_t *crear_muestras(tramo_t *t, float v){
+int16_t *crear_muestras(tramo_t *t, float maximo, float minimo){
+	float escala = crear_factor_escala(maximo, minimo);
 	
 	int16_t *vect_wave = malloc(t->n * sizeof(int16_t));
 	if(vect_wave == NULL)
 		return NULL;
 
 	for(size_t i = 0; i < t->n; i++)
-		vect_wave[i] = t->v[i] * v;
+		vect_wave[i] = t->v[i] * escala;
 
 	return vect_wave;
 }
